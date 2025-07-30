@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>消化道出血急症处理指引卡片v2.2通用版</title>
+    <style>
+        body {
+            font-family: 'PingFang SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            text-align: left;
+        }
+        .container {
+            background: white;
+            border: 4px solid #c62828;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(198, 40, 40, 0.2);
+            text-align: left;
+        }
+        h1 {
+            color: #c62828;
+            text-align: left;
+            border: 3px solid #c62828;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #ffebee, #ffcdd2);
+            font-size: 1.8em;
+            font-weight: bold;
+        }
+        .red-card-title {
+            background: #c62828;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            display: inline-block;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        h2 {
+            color: #dc2626;
+            border-left: 4px solid #dc2626;
+            padding-left: 15px;
+            margin-top: 30px;
+        }
+        h3 {
+            color: #b91c1c;
+            margin-top: 25px;
+            border-bottom: 2px solid #fca5a5;
+            padding-bottom: 5px;
+        }
+        .emergency-box {
+            background: #fef2f2;
+            border: 2px solid #dc2626;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .warning-box {
+            background: #fef2f2;
+            border: 2px solid #ef4444;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .info-box {
+            background: #fef7f7;
+            border: 2px solid #f87171;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .success-box {
+            background: #fef2f2;
+            border: 2px solid #dc2626;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .form-field {
+            background: #fefefe;
+            border: 1px solid #fca5a5;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 4px;
+        }
+        .phone-number {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #dc2626;
+        }
+        .print-button {
+            background: #e5e7eb;
+            color: #374151;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        .print-button:hover {
+            background: #d1d5db;
+        }
+        @media print {
+            body { background: white; }
+            .container { box-shadow: none; border: 2px solid #c62828; }
+            .print-button { display: none; }
+        }
+        ul, ol {
+            padding-left: 20px;
+        }
+        li {
+            margin: 8px 0;
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            border: 1px solid #fca5a5;
+        }
+        th, td {
+            border: 1px solid #fca5a5;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #fef2f2;
+            color: #dc2626;
+        }
+        input, select, textarea {
+            border: 1px solid #fca5a5 !important;
+            border-radius: 3px !important;
+            padding: 5px !important;
+            font-size: 14px !important;
+        }
+        input:focus, select:focus, textarea:focus {
+            border-color: #dc2626 !important;
+            outline: none !important;
+            box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.1) !important;
+        }
+        strong {
+            color: #dc2626;
+        }
+    </style>
+</head>
+<body>    <div class="container">
+        <div style="margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                <button class="print-button" onclick="window.print()">🖨️ 打印此卡片</button>
+                <button class="print-button" onclick="savePDF()">📄 保存为PDF</button>
+                <button class="print-button" onclick="saveAsImage('png')">🖼️ 保存为PNG</button>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <button class="print-button" onclick="saveFormData()">💾 保存信息</button>
+                <button class="print-button" onclick="clearFormData()">🗑️ 清空信息</button>
+                <button class="print-button" onclick="loadFormData()">📂 加载信息</button>
+            </div>
+        </div>
+
+        <h1>🔴 小红卡 - 消化道出血处理指引 v2.2 🔴</h1>
+
+        <div class="emergency-box">
+            <h2>🆘 按照四大模块顺序使用，急诊不乱，日常预防 🆘</h2>
+            <p><strong>1. 急救指导步骤</strong> → <strong>2. 病情诊断关键指引</strong> → <strong>3. 日常注意和预防</strong> → <strong>4. 辅助服务</strong></p>
+        </div>
+
+        <h2>🚨 第一部分：急救指导步骤</h2>
+
+        <h3>⚠️ 重要风险提醒</h3>
+        <div class="warning-box">
+            <ul>
+                <li><strong>立即停止进食进水</strong> - 防止呕吐误吸</li>
+                <li><strong>保持侧卧位</strong> - 防止呕血时窒息</li>
+                <li><strong>禁止催吐</strong> - 可能加重出血</li>
+                <li><strong>避免剧烈活动</strong> - 防止血压波动</li>
+                <li><strong>记录出血量和性状</strong> - 为医生诊断提供依据</li>
+            </ul>
+        </div>
+
+        <h3>📞 120报警话术模板</h3>
+        <div class="emergency-box">
+            <p><strong>"您好，我是[患者姓名]的家属，患者出现消化道出血症状："</strong></p>
+            <ul>
+                <li>症状：[呕血/黑便/便血]，量约[具体描述]</li>
+                <li>时间：[开始时间]</li>
+                <li>患者年龄：[年龄]岁</li>
+                <li>既往病史：[胃病/肝病/其他]</li>
+                <li>当前状态：[意识/血压/脉搏情况]</li>
+                <li>地址：[详细地址]</li>
+                <li>联系电话：[联系方式]</li>
+            </ul>
+        </div>
+
+        <h3>🆔 关键信息卡</h3>
+        <div class="info-box">
+            <div class="form-field"><strong>患者姓名：</strong><input type="text" id="patientName" placeholder="请输入患者姓名" style="border:1px solid #ddd; padding:5px; margin-left:10px; border-radius:3px;"></div>
+            <div class="form-field"><strong>身份证号：</strong><input type="text" id="idNumber" placeholder="请输入身份证号" style="border:1px solid #ddd; padding:5px; margin-left:10px; border-radius:3px;"></div>
+            <div class="form-field"><strong>年龄：</strong><input type="number" id="age" placeholder="年龄" style="border:1px solid #ddd; padding:5px; margin-left:10px; border-radius:3px; width:80px;">岁</div>
+            <div class="form-field"><strong>血型：</strong><select id="bloodType" style="border:1px solid #ddd; padding:5px; margin-left:10px; border-radius:3px;">
+                <option value="">请选择血型</option>
+                <option value="A型">A型</option>
+                <option value="B型">B型</option>
+                <option value="AB型">AB型</option>
+                <option value="O型">O型</option>
+            </select></div>
+            <div class="form-field"><strong>联系电话：</strong><input type="tel" id="phone" placeholder="请输入联系电话" style="border:1px solid #ddd; padding:5px; margin-left:10px; border-radius:3px;"></div>
+            <div class="form-field"><strong>紧急联系人：</strong><input type="text" id="emergencyContact" placeholder="姓名" style="border:1px solid #ddd; padding:5px; margin-left:10px; border-radius:3px; width:100px;"> <input type="tel" id="emergencyPhone" placeholder="联系方式" style="border:1px solid #ddd; padding:5px; border-radius:3px;"></div>
+            <div class="form-field"><strong>既往病史：</strong><textarea id="medicalHistory" placeholder="请输入主要疾病史" style="border:1px solid #ddd; padding:5px; margin-left:10px; border-radius:3px; width:300px; height:60px;"></textarea></div>
+            <div class="form-field"><strong>过敏史：</strong><textarea id="allergies" placeholder="请输入药物过敏情况" style="border:1px solid #ddd; padding:5px; margin-left:10px; border-radius:3px; width:300px; height:40px;"></textarea></div>
+        </div>
+
+        <h3>🩸 血型验血报告</h3>
+        <div class="info-box">
+            <p><strong>血型：</strong><select id="bloodTypeReport" style="border:1px solid #ddd; padding:5px; border-radius:3px;">
+                <option value="">请选择血型</option>
+                <option value="A型">A型</option>
+                <option value="B型">B型</option>
+                <option value="AB型">AB型</option>
+                <option value="O型">O型</option>
+            </select> | <strong>Rh因子：</strong><select id="rhFactor" style="border:1px solid #ddd; padding:5px; border-radius:3px;">
+                <option value="">请选择</option>
+                <option value="阳性">阳性</option>
+                <option value="阴性">阴性</option>
+            </select></p>
+            <p><strong>验血日期：</strong><input type="date" id="testDate" style="border:1px solid #ddd; padding:5px; border-radius:3px;"> | <strong>检验机构：</strong><input type="text" id="testHospital" placeholder="请输入医院名称" style="border:1px solid #ddd; padding:5px; border-radius:3px;"></p>
+            <p><strong>备注：</strong>紧急情况下可直接告知医生血型信息</p>
+        </div>
+
+        <h3>🏥 指定处置医院信息</h3>
+        <div class="success-box">
+            <p><strong>首选医院：</strong><input type="text" id="primaryHospital" placeholder="请输入首选医院名称" style="border:1px solid #ddd; padding:5px; border-radius:3px; width:200px;"></p>
+            <p><strong>科室：</strong><input type="text" id="department" placeholder="消化内科/急诊科" style="border:1px solid #ddd; padding:5px; border-radius:3px; width:150px;"></p>
+            <p><strong>地址：</strong><input type="text" id="hospitalAddress" placeholder="请输入医院地址" style="border:1px solid #ddd; padding:5px; border-radius:3px; width:300px;"></p>
+            <p><strong>电话：</strong><input type="tel" id="hospitalPhone" placeholder="请输入医院电话" style="border:1px solid #ddd; padding:5px; border-radius:3px; width:150px;"></p>
+            <p><strong>备选医院：</strong><input type="text" id="backupHospital" placeholder="备选医院名称及联系方式" style="border:1px solid #ddd; padding:5px; border-radius:3px; width:300px;"></p>
+        </div>
+
+        <h3>👨‍⚕️ 主治医生联系方式</h3>
+        <div class="info-box">
+            <p><strong>主治医生：</strong><input type="text" id="doctorName" placeholder="请输入医生姓名" style="border:1px solid #ddd; padding:5px; border-radius:3px; width:120px;"></p>
+            <p><strong>科室：</strong><input type="text" id="doctorDepartment" placeholder="请输入科室名称" style="border:1px solid #ddd; padding:5px; border-radius:3px; width:150px;"></p>
+            <p><strong>联系方式：</strong><input type="tel" id="doctorPhone" placeholder="请输入医生联系方式" style="border:1px solid #ddd; padding:5px; border-radius:3px; width:150px;"></p>
+            <p><strong>出诊时间：</strong><input type="text" id="doctorSchedule" placeholder="请输入出诊安排" style="border:1px solid #ddd; padding:5px; border-radius:3px; width:200px;"></p>
+        </div>
+
+        <h3>🚑 救护车到达前处理要点</h3>
+        <div class="warning-box">
+            <ol>
+                <li><strong>体位管理：</strong>患者取侧卧位，头偏向一侧</li>
+                <li><strong>保持呼吸道通畅：</strong>清理口腔分泌物</li>
+                <li><strong>观察生命体征：</strong>监测意识、呼吸、脉搏</li>
+                <li><strong>记录症状：</strong>出血量、颜色、时间</li>
+                <li><strong>准备物品：</strong>身份证、医保卡、病历资料</li>
+                <li><strong>禁止操作：</strong>不要给水、药物，不要移动患者</li>
+            </ol>
+        </div>
+
+        <h3>🚑 救护车上处理要点</h3>
+        <div class="info-box">
+            <ol>
+                <li><strong>配合医护：</strong>提供详细病史和症状描述</li>
+                <li><strong>建立静脉通路：</strong>协助暴露手臂便于输液</li>
+                <li><strong>持续监测：</strong>观察患者意识和生命体征变化</li>
+                <li><strong>联系医院：</strong>提前通知目标医院准备接诊</li>
+            </ol>
+        </div>
+
+        <h2>🔍 第二部分：病情诊断关键指引</h2>
+
+        <h3>📋 到达医院后流程</h3>
+        <div class="success-box">
+            <ol>
+                <li><strong>急诊科挂号：</strong>说明消化道出血急症</li>
+                <li><strong>提供病史：</strong>详细描述症状和既往病史</li>
+                <li><strong>配合检查：</strong>血常规、凝血功能、肝肾功能</li>
+                <li><strong>影像检查：</strong>根据医生建议进行胃镜或CT</li>
+                <li><strong>治疗配合：</strong>遵医嘱进行止血治疗</li>
+            </ol>
+        </div>
+
+        <h3>🚛 转运评估</h3>
+        <div class="warning-box">
+            <h4>需要立即转运的情况：</h4>
+            <ul>
+                <li>大量呕血或便血（超过200ml）</li>
+                <li>血压下降（收缩压&lt;90mmHg）</li>
+                <li>心率增快（&gt;100次/分）</li>
+                <li>意识模糊或昏迷</li>
+                <li>面色苍白、出冷汗</li>
+            </ul>
+        </div>
+
+        <h3>🏥 复杂出血情况处理</h3>
+        <div class="warning-box">
+            <h4>复发性消化道出血的现实情况：</h4>
+            <p>对于有消化道疾病史的患者，出血复发率较高，需要：</p>
+            <ul>
+                <li>建立长期医患关系</li>
+                <li>熟悉专业医生和医院</li>
+                <li>制定个性化处理方案</li>
+            </ul>
+            
+            <h4>专业医生推荐：</h4>
+            <div class="info-box">
+                <p><strong>医生姓名：</strong><input type="text" id="specialistName" placeholder="专科医生姓名" style="border:1px solid #c41e3a; padding:3px; border-radius:3px; width:120px;"></p>
+                <p><strong>医院科室：</strong><input type="text" id="specialistHospital" placeholder="医院名称 科室" style="border:1px solid #c41e3a; padding:3px; border-radius:3px; width:180px;"></p>
+                <p><strong>专业特长：</strong><input type="text" id="specialistSpecialty" placeholder="专业特长" value="消化道出血、内镜治疗" style="border:1px solid #c41e3a; padding:3px; border-radius:3px; width:150px;"></p>
+                <p><strong>联系方式：</strong><input type="tel" id="specialistPhone" placeholder="联系方式" style="border:1px solid #c41e3a; padding:3px; border-radius:3px; width:120px; color:#c41e3a; font-weight:bold;"></p>
+                <p><strong>出诊时间：</strong><input type="text" id="specialistSchedule" placeholder="具体时间安排" style="border:1px solid #c41e3a; padding:3px; border-radius:3px; width:150px;"></p>
+            </div>
+            
+            <h4>医院选择策略：</h4>
+            <ul>
+                <li><strong>首选：</strong>有既往病历的医院</li>
+                <li><strong>备选：</strong>就近的三甲医院消化内科</li>
+                <li><strong>考虑因素：</strong>医生经验、内镜设备、距离远近</li>
+            </ul>
+        </div>
+
+        <h2>🛡️ 第三部分：日常注意和预防</h2>
+
+        <h3>🏠 家中常备物品</h3>
+        <div class="info-box">
+            <ul>
+                <li><strong>急救用品：</strong>体温计、血压计、纱布、酒精</li>
+                <li><strong>常用药物：</strong>[根据医生建议准备]</li>
+                <li><strong>重要文件：</strong>身份证、医保卡、病历本</li>
+                <li><strong>联系清单：</strong>医生电话、医院电话、家属电话</li>
+            </ul>
+        </div>
+
+        <h3>🚫 高危食物禁忌</h3>
+        <div class="warning-box">
+            <ul>
+                <li><strong>刺激性食物：</strong>辣椒、胡椒、芥末</li>
+                <li><strong>硬质食物：</strong>坚果、骨头、鱼刺</li>
+                <li><strong>酸性食物：</strong>柑橘、醋、酸菜</li>
+                <li><strong>酒精饮品：</strong>白酒、啤酒、红酒</li>
+                <li><strong>热烫食物：</strong>过热汤品、火锅</li>
+            </ul>
+        </div>
+
+        <h3>💊 危险药物清单</h3>
+        <div class="warning-box">
+            <ul>
+                <li><strong>抗凝药物：</strong>华法林、肝素</li>
+                <li><strong>抗血小板药：</strong>阿司匹林、氯吡格雷</li>
+                <li><strong>非甾体抗炎药：</strong>布洛芬、双氯芬酸</li>
+                <li><strong>激素类药物：</strong>强的松、地塞米松</li>
+            </ul>
+            <p><strong>注意：</strong>服用任何药物前请咨询医生</p>
+        </div>
+
+        <h2>🏥 第四部分：辅助服务</h2>
+
+        <h3>📋 个人医疗信息卡</h3>
+        <div class="info-box">
+            <p><strong>医保卡号：</strong><input type="text" id="insuranceNumber" placeholder="请输入医保卡号" style="border:1px solid #ddd; padding:5px; border-radius:3px; width:180px;"></p>
+            <p><strong>身份证号：</strong><input type="text" id="personalIdNumber" placeholder="请输入身份证号" style="border:1px solid #ddd; padding:5px; border-radius:3px; width:180px;"></p>
+            <p><strong>常用药物：</strong><textarea id="regularMedications" placeholder="请输入常用药物名称和剂量" style="border:1px solid #ddd; padding:5px; border-radius:3px; width:100%; height:60px; resize:vertical;"></textarea></p>
+            <p><strong>药物过敏：</strong><textarea id="drugAllergies" placeholder="请输入过敏药物名称" style="border:1px solid #ddd; padding:5px; border-radius:3px; width:100%; height:40px; resize:vertical;"></textarea></p>
+            <p><strong>慢性疾病：</strong><textarea id="chronicDiseases" placeholder="请输入慢性疾病情况" style="border:1px solid #ddd; padding:5px; border-radius:3px; width:100%; height:60px; resize:vertical;"></textarea></p>
+            <p><strong>手术史：</strong><textarea id="surgeryHistory" placeholder="请输入手术史" style="border:1px solid #ddd; padding:5px; border-radius:3px; width:100%; height:60px; resize:vertical;"></textarea></p>
+            <p><strong>家族病史：</strong><textarea id="familyHistory" placeholder="请输入家族病史" style="border:1px solid #ddd; padding:5px; border-radius:3px; width:100%; height:60px; resize:vertical;"></textarea></p>
+        </div>
+
+        <h3>📚 医学术语速查表</h3>
+        <div class="info-box">
+            <ul>
+                <li><strong>呕血：</strong>从口腔呕出血液，通常为上消化道出血</li>
+                <li><strong>黑便：</strong>大便呈黑色柏油样，提示上消化道出血</li>
+                <li><strong>便血：</strong>大便带血，通常为下消化道出血</li>
+                <li><strong>休克：</strong>血压下降、心率增快、意识模糊</li>
+                <li><strong>血红蛋白：</strong>反映贫血程度的重要指标</li>
+            </ul>
+        </div>
+
+        <h3>📞 紧急联系网络</h3>
+        <div class="form-field">
+            <table>
+                <tr><th>联系类型</th><th>姓名</th><th>电话</th><th>备注</th></tr>
+                <tr>
+                    <td><strong>主治医生</strong></td>
+                    <td><input type="text" id="primaryDoctorName" placeholder="医生姓名" style="border:1px solid #c41e3a; padding:3px; border-radius:3px; width:100px;"></td>
+                    <td><input type="tel" id="primaryDoctorPhone" placeholder="联系电话" style="border:1px solid #c41e3a; padding:3px; border-radius:3px; width:120px; color:#c41e3a; font-weight:bold;"></td>
+                    <td><input type="text" id="primaryDoctorNote" placeholder="科室/出诊时间" style="border:1px solid #c41e3a; padding:3px; border-radius:3px; width:120px;"></td>
+                </tr>
+                <tr>
+                    <td><strong>医院总机</strong></td>
+                    <td><input type="text" id="hospitalName" placeholder="医院名称" style="border:1px solid #c41e3a; padding:3px; border-radius:3px; width:100px;"></td>
+                    <td><input type="tel" id="hospitalMainPhone" placeholder="总机电话" style="border:1px solid #c41e3a; padding:3px; border-radius:3px; width:120px; color:#c41e3a; font-weight:bold;"></td>
+                    <td><input type="text" id="hospitalNote" placeholder="地址/科室" style="border:1px solid #c41e3a; padding:3px; border-radius:3px; width:120px;"></td>
+                </tr>
+                <tr>
+                    <td><strong>家属联系</strong></td>
+                    <td><input type="text" id="familyContactName" placeholder="家属姓名" style="border:1px solid #c41e3a; padding:3px; border-radius:3px; width:100px;"></td>
+                    <td><input type="tel" id="familyContactPhone" placeholder="联系电话" style="border:1px solid #c41e3a; padding:3px; border-radius:3px; width:120px; color:#c41e3a; font-weight:bold;"></td>
+                    <td><input type="text" id="familyContactNote" placeholder="关系/备注" style="border:1px solid #c41e3a; padding:3px; border-radius:3px; width:120px;"></td>
+                </tr>
+                <tr>
+                    <td><strong>病友互助</strong></td>
+                    <td><input type="text" id="patientGroupName" placeholder="联系人" style="border:1px solid #c41e3a; padding:3px; border-radius:3px; width:100px;"></td>
+                    <td><input type="tel" id="patientGroupPhone" placeholder="联系电话" style="border:1px solid #c41e3a; padding:3px; border-radius:3px; width:120px; color:#c41e3a; font-weight:bold;"></td>
+                    <td><input type="text" id="patientGroupNote" placeholder="群组/备注" style="border:1px solid #c41e3a; padding:3px; border-radius:3px; width:120px;"></td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="info-box">
+            <p><strong>家属1：</strong><input type="text" id="family1Name" placeholder="姓名" style="border:1px solid #ddd; padding:5px; border-radius:3px; width:100px;"> | <strong>关系：</strong><input type="text" id="family1Relation" placeholder="关系" style="border:1px solid #ddd; padding:5px; border-radius:3px; width:80px;"> | <strong>电话：</strong><input type="tel" id="family1Phone" placeholder="联系电话" style="border:1px solid #ddd; padding:5px; border-radius:3px; width:120px;"></p>
+            <p><strong>家属2：</strong><input type="text" id="family2Name" placeholder="姓名" style="border:1px solid #ddd; padding:5px; border-radius:3px; width:100px;"> | <strong>关系：</strong><input type="text" id="family2Relation" placeholder="关系" style="border:1px solid #ddd; padding:5px; border-radius:3px; width:80px;"> | <strong>电话：</strong><input type="tel" id="family2Phone" placeholder="联系电话" style="border:1px solid #ddd; padding:5px; border-radius:3px; width:120px;"></p>
+            <p><strong>邻居/朋友：</strong><input type="text" id="neighborName" placeholder="姓名" style="border:1px solid #ddd; padding:5px; border-radius:3px; width:100px;"> | <strong>电话：</strong><input type="tel" id="neighborPhone" placeholder="联系电话" style="border:1px solid #ddd; padding:5px; border-radius:3px; width:120px;"></p>
+            <p><strong>社区医生：</strong><input type="text" id="communityDoctor" placeholder="姓名" style="border:1px solid #ddd; padding:5px; border-radius:3px; width:100px;"> | <strong>电话：</strong><input type="tel" id="communityDoctorPhone" placeholder="联系电话" style="border:1px solid #ddd; padding:5px; border-radius:3px; width:120px;"></p>
+        </div>
+
+        <h3>📝 使用说明</h3>
+        <div class="success-box">
+            <ol>
+                <li><strong>紧急情况：</strong>按照四大模块顺序执行</li>
+                <li><strong>日常准备：</strong>定期更新个人信息</li>
+                <li><strong>携带方式：</strong>可打印随身携带或保存在手机中</li>
+                <li><strong>更新频率：</strong>每3个月检查更新一次</li>
+                <li><strong>分享使用：</strong>可分享给家属和朋友学习</li>
+            </ol>
+        </div>
+
+        <div style="text-align: left; margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #ffebee, #ffcdd2); border: 2px solid #c62828; border-radius: 10px;">
+            <p><strong style="color: #c62828;">版本信息：</strong>小红卡v2.2通用版 | <strong style="color: #c62828;">更新日期：</strong>2025年1月</p>
+            <p><strong style="color: #c62828;">适用范围：</strong>消化道出血高风险患者及家属</p>
+            <p style="color: #d32f2f; font-size: 0.9em;">本指引卡片仅供参考，具体治疗请遵医嘱</p>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+        function printCard() {
+            window.print();
+        }
+        
+        // 保存为图片功能
+        function saveAsImage(format) {
+            // 隐藏按钮区域
+            const printSection = document.querySelector('.print-section');
+            printSection.style.display = 'none';
+            
+            html2canvas(document.body, {
+                scale: 2, // 提高图片质量
+                useCORS: true,
+                allowTaint: true,
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
+                // 恢复按钮显示
+                printSection.style.display = 'block';
+                
+                const link = document.createElement('a');
+                link.download = `消化道出血急症处理指引卡片_${new Date().toISOString().split('T')[0]}.${format}`;
+                
+                if (format === 'png') {
+                    link.href = canvas.toDataURL('image/png');
+                } else if (format === 'jpeg') {
+                    link.href = canvas.toDataURL('image/jpeg', 0.9);
+                }
+                
+                link.click();
+            }).catch(error => {
+                printSection.style.display = 'block';
+                alert('保存图片失败，请重试！');
+                console.error('Error:', error);
+            });
+        }
+        
+        // 保存表单数据到本地存储
+        function saveFormData() {
+            const formData = {
+                patientName: document.getElementById('patientName').value,
+                idNumber: document.getElementById('idNumber').value,
+                age: document.getElementById('age').value,
+                bloodType: document.getElementById('bloodType').value,
+                phone: document.getElementById('phone').value,
+                emergencyContact: document.getElementById('emergencyContact').value,
+                emergencyPhone: document.getElementById('emergencyPhone').value,
+                medicalHistory: document.getElementById('medicalHistory').value,
+                allergies: document.getElementById('allergies').value,
+                bloodTypeReport: document.getElementById('bloodTypeReport').value,
+                rhFactor: document.getElementById('rhFactor').value,
+                testDate: document.getElementById('testDate').value,
+                testHospital: document.getElementById('testHospital').value,
+                primaryHospital: document.getElementById('primaryHospital').value,
+                department: document.getElementById('department').value,
+                hospitalAddress: document.getElementById('hospitalAddress').value,
+                hospitalPhone: document.getElementById('hospitalPhone').value,
+                backupHospital: document.getElementById('backupHospital').value,
+                doctorName: document.getElementById('doctorName').value,
+                doctorDepartment: document.getElementById('doctorDepartment').value,
+                doctorPhone: document.getElementById('doctorPhone').value,
+                doctorSchedule: document.getElementById('doctorSchedule').value,
+                family1Name: document.getElementById('family1Name').value,
+                family1Relation: document.getElementById('family1Relation').value,
+                family1Phone: document.getElementById('family1Phone').value,
+                family2Name: document.getElementById('family2Name').value,
+                family2Relation: document.getElementById('family2Relation').value,
+                family2Phone: document.getElementById('family2Phone').value,
+                neighborName: document.getElementById('neighborName').value,
+                neighborPhone: document.getElementById('neighborPhone').value,
+                communityDoctor: document.getElementById('communityDoctor').value,
+                communityDoctorPhone: document.getElementById('communityDoctorPhone').value,
+                // 新增个人医疗信息卡字段
+                insuranceNumber: document.getElementById('insuranceNumber').value,
+                personalIdNumber: document.getElementById('personalIdNumber').value,
+                regularMedications: document.getElementById('regularMedications').value,
+                drugAllergies: document.getElementById('drugAllergies').value,
+                chronicDiseases: document.getElementById('chronicDiseases').value,
+                surgeryHistory: document.getElementById('surgeryHistory').value,
+                familyHistory: document.getElementById('familyHistory').value,
+                // 新增专业医生推荐字段
+                specialistName: document.getElementById('specialistName').value,
+                specialistHospital: document.getElementById('specialistHospital').value,
+                specialistSpecialty: document.getElementById('specialistSpecialty').value,
+                specialistContact: document.getElementById('specialistContact').value,
+                specialistSchedule: document.getElementById('specialistSchedule').value,
+                // 新增紧急联系网络字段
+                primaryDoctorName: document.getElementById('primaryDoctorName').value,
+                primaryDoctorPhone: document.getElementById('primaryDoctorPhone').value,
+                primaryDoctorNote: document.getElementById('primaryDoctorNote').value,
+                hospitalName: document.getElementById('hospitalName').value,
+                hospitalMainPhone: document.getElementById('hospitalMainPhone').value,
+                hospitalNote: document.getElementById('hospitalNote').value,
+                familyContactName: document.getElementById('familyContactName').value,
+                familyContactPhone: document.getElementById('familyContactPhone').value,
+                familyContactNote: document.getElementById('familyContactNote').value,
+                patientGroupName: document.getElementById('patientGroupName').value,
+                patientGroupPhone: document.getElementById('patientGroupPhone').value,
+                patientGroupNote: document.getElementById('patientGroupNote').value
+            };
+            
+            localStorage.setItem('digestiveBleedingCard', JSON.stringify(formData));
+            alert('信息已保存到本地！');
+        }
+        
+        // 从本地存储加载表单数据
+        function loadFormData() {
+            const savedData = localStorage.getItem('digestiveBleedingCard');
+            if (savedData) {
+                const formData = JSON.parse(savedData);
+                
+                // 加载基本信息
+                if (formData.patientName) document.getElementById('patientName').value = formData.patientName;
+                if (formData.idNumber) document.getElementById('idNumber').value = formData.idNumber;
+                if (formData.age) document.getElementById('age').value = formData.age;
+                if (formData.bloodType) document.getElementById('bloodType').value = formData.bloodType;
+                if (formData.phone) document.getElementById('phone').value = formData.phone;
+                if (formData.emergencyContact) document.getElementById('emergencyContact').value = formData.emergencyContact;
+                if (formData.emergencyPhone) document.getElementById('emergencyPhone').value = formData.emergencyPhone;
+                if (formData.medicalHistory) document.getElementById('medicalHistory').value = formData.medicalHistory;
+                if (formData.allergies) document.getElementById('allergies').value = formData.allergies;
+                
+                // 加载血型验血报告
+                if (formData.bloodTypeReport) document.getElementById('bloodTypeReport').value = formData.bloodTypeReport;
+                if (formData.rhFactor) document.getElementById('rhFactor').value = formData.rhFactor;
+                if (formData.testDate) document.getElementById('testDate').value = formData.testDate;
+                if (formData.testHospital) document.getElementById('testHospital').value = formData.testHospital;
+                
+                // 加载医院信息
+                if (formData.primaryHospital) document.getElementById('primaryHospital').value = formData.primaryHospital;
+                if (formData.department) document.getElementById('department').value = formData.department;
+                if (formData.hospitalAddress) document.getElementById('hospitalAddress').value = formData.hospitalAddress;
+                if (formData.hospitalPhone) document.getElementById('hospitalPhone').value = formData.hospitalPhone;
+                if (formData.backupHospital) document.getElementById('backupHospital').value = formData.backupHospital;
+                
+                // 加载医生信息
+                if (formData.doctorName) document.getElementById('doctorName').value = formData.doctorName;
+                if (formData.doctorDepartment) document.getElementById('doctorDepartment').value = formData.doctorDepartment;
+                if (formData.doctorPhone) document.getElementById('doctorPhone').value = formData.doctorPhone;
+                if (formData.doctorSchedule) document.getElementById('doctorSchedule').value = formData.doctorSchedule;
+                
+                // 加载家属信息
+                if (formData.family1Name) document.getElementById('family1Name').value = formData.family1Name;
+                if (formData.family1Relation) document.getElementById('family1Relation').value = formData.family1Relation;
+                if (formData.family1Phone) document.getElementById('family1Phone').value = formData.family1Phone;
+                if (formData.family2Name) document.getElementById('family2Name').value = formData.family2Name;
+                if (formData.family2Relation) document.getElementById('family2Relation').value = formData.family2Relation;
+                if (formData.family2Phone) document.getElementById('family2Phone').value = formData.family2Phone;
+                
+                // 加载邻居和社区医生信息
+                if (formData.neighborName) document.getElementById('neighborName').value = formData.neighborName;
+                if (formData.neighborPhone) document.getElementById('neighborPhone').value = formData.neighborPhone;
+                if (formData.communityDoctor) document.getElementById('communityDoctor').value = formData.communityDoctor;
+                if (formData.communityDoctorPhone) document.getElementById('communityDoctorPhone').value = formData.communityDoctorPhone;
+                
+                // 加载个人医疗信息卡字段
+                if (formData.insuranceNumber) document.getElementById('insuranceNumber').value = formData.insuranceNumber;
+                if (formData.personalIdNumber) document.getElementById('personalIdNumber').value = formData.personalIdNumber;
+                if (formData.regularMedications) document.getElementById('regularMedications').value = formData.regularMedications;
+                if (formData.drugAllergies) document.getElementById('drugAllergies').value = formData.drugAllergies;
+                if (formData.chronicDiseases) document.getElementById('chronicDiseases').value = formData.chronicDiseases;
+                if (formData.surgeryHistory) document.getElementById('surgeryHistory').value = formData.surgeryHistory;
+                if (formData.familyHistory) document.getElementById('familyHistory').value = formData.familyHistory;
+                
+                // 加载专业医生推荐字段
+                if (formData.specialistName) document.getElementById('specialistName').value = formData.specialistName;
+                if (formData.specialistHospital) document.getElementById('specialistHospital').value = formData.specialistHospital;
+                if (formData.specialistSpecialty) document.getElementById('specialistSpecialty').value = formData.specialistSpecialty;
+                if (formData.specialistContact) document.getElementById('specialistContact').value = formData.specialistContact;
+                if (formData.specialistSchedule) document.getElementById('specialistSchedule').value = formData.specialistSchedule;
+                
+                // 加载紧急联系网络字段
+                if (formData.primaryDoctorName) document.getElementById('primaryDoctorName').value = formData.primaryDoctorName;
+                if (formData.primaryDoctorPhone) document.getElementById('primaryDoctorPhone').value = formData.primaryDoctorPhone;
+                if (formData.primaryDoctorNote) document.getElementById('primaryDoctorNote').value = formData.primaryDoctorNote;
+                if (formData.hospitalName) document.getElementById('hospitalName').value = formData.hospitalName;
+                if (formData.hospitalMainPhone) document.getElementById('hospitalMainPhone').value = formData.hospitalMainPhone;
+                if (formData.hospitalNote) document.getElementById('hospitalNote').value = formData.hospitalNote;
+                if (formData.familyContactName) document.getElementById('familyContactName').value = formData.familyContactName;
+                if (formData.familyContactPhone) document.getElementById('familyContactPhone').value = formData.familyContactPhone;
+                if (formData.familyContactNote) document.getElementById('familyContactNote').value = formData.familyContactNote;
+                if (formData.patientGroupName) document.getElementById('patientGroupName').value = formData.patientGroupName;
+                if (formData.patientGroupPhone) document.getElementById('patientGroupPhone').value = formData.patientGroupPhone;
+                if (formData.patientGroupNote) document.getElementById('patientGroupNote').value = formData.patientGroupNote;
+                
+                alert('信息已从本地加载！');
+            } else {
+                alert('没有找到保存的信息！');
+            }
+        }
+        
+        // 清空所有表单数据
+        function clearFormData() {
+            if (confirm('确定要清空所有信息吗？')) {
+                const inputs = document.querySelectorAll('input, select, textarea');
+                inputs.forEach(input => {
+                    input.value = '';
+                });
+                localStorage.removeItem('digestiveBleedingCard');
+                alert('信息已清空！');
+            }
+        }
+        
+        // 页面加载时自动加载保存的数据
+        window.onload = function() {
+            const savedData = localStorage.getItem('digestiveBleedingCard');
+            if (savedData) {
+                loadFormData();
+            }
+        };
+    </script>
+</body>
+</html>
