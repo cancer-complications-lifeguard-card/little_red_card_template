@@ -1,0 +1,2326 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小红卡 - 并发症管理指引生成器</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        :root {
+            --primary-red: #FF3B30;
+            --dark-red: #D70015;
+            --light-gray: #F2F2F7;
+            --dark-gray: #1C1C1E;
+            --medium-gray: #6B7280;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "PingFang SC", "Helvetica Neue", sans-serif;
+            background-color: var(--light-gray);
+            color: var(--dark-gray);
+            line-height: 1.6;
+        }
+
+        button {
+            font-family: inherit;
+            cursor: pointer;
+            border: none;
+            outline: none;
+        }
+
+        input, textarea, select {
+            font-family: inherit;
+            outline: none;
+        }
+
+        .app-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--primary-red);
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 18px;
+            color: var(--medium-gray);
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .tab {
+            padding: 12px 20px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--medium-gray);
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            color: var(--primary-red);
+            border-bottom-color: var(--primary-red);
+        }
+
+        .tab-content {
+            background-color: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .steps {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 25%;
+        }
+
+        .step-number {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--light-gray);
+            color: var(--medium-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .step.active .step-number {
+            background-color: var(--primary-red);
+            color: white;
+        }
+
+        .step-title {
+            font-size: 14px;
+            text-align: center;
+            color: var(--medium-gray);
+        }
+
+        .step.active .step-title {
+            color: var(--primary-red);
+            font-weight: 500;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark-gray);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--light-gray);
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 15px;
+            background-color: var(--light-gray);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .checkbox-item:hover {
+            background-color: rgba(255, 59, 48, 0.1);
+        }
+
+        .checkbox-item.selected {
+            background-color: rgba(255, 59, 48, 0.15);
+            border: 1px solid var(--primary-red);
+        }
+
+        .checkbox-item input {
+            margin-right: 10px;
+            margin-top: 3px;
+        }
+
+        .checkbox-item-content h4 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .checkbox-item-content p {
+            font-size: 14px;
+            color: var(--medium-gray);
+        }
+
+        .contact-item,
+        .hospital-item {
+            background-color: var(--light-gray);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .contact-item h4,
+        .hospital-item h4 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .contact-item p,
+        .hospital-item p {
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .remove-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: transparent;
+            color: var(--medium-gray);
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .add-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 12px;
+            background-color: transparent;
+            border: 1px dashed var(--medium-gray);
+            border-radius: 8px;
+            color: var(--medium-gray);
+            font-size: 16px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        .add-button:hover {
+            border-color: var(--primary-red);
+            color: var(--primary-red);
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .nav-button {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .nav-button.prev {
+            background-color: var(--light-gray);
+            color: var(--dark-gray);
+        }
+
+        .nav-button.next {
+            background-color: var(--primary-red);
+            color: white;
+        }
+
+        .nav-button.generate {
+            background-color: var(--primary-red);
+            color: white;
+        }
+
+        .card-preview {
+            background-color: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .card-header {
+            border-bottom: 1px solid var(--light-gray);
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card-header h2 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--primary-red);
+        }
+
+        .card-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .info-tag {
+            font-size: 14px;
+            background-color: var(--light-gray);
+            padding: 6px 12px;
+            border-radius: 20px;
+        }
+
+        .card-section {
+            margin-bottom: 25px;
+        }
+
+        .card-section h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--dark-gray);
+            display: flex;
+            align-items: center;
+        }
+
+        .card-section h3 .icon {
+            margin-right: 8px;
+        }
+
+        .warning-box {
+            background-color: rgba(255, 59, 48, 0.1);
+            border-left: 4px solid var(--primary-red);
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .warning-title {
+            font-weight: 600;
+            color: var(--primary-red);
+            margin-bottom: 10px;
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .action-button {
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .action-button.primary {
+            background-color: var(--primary-red);
+            color: white;
+        }
+
+        .action-button.secondary {
+            background-color: var(--light-gray);
+            color: var(--dark-gray);
+        }
+
+        .chat-container {
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            position: relative;
+        }
+
+        .user-message {
+            align-self: flex-end;
+            background-color: var(--primary-red);
+            color: white;
+            border-bottom-right-radius: 6px;
+        }
+
+        .ai-message {
+            align-self: flex-start;
+            background-color: var(--light-gray);
+            color: var(--dark-gray);
+            border-bottom-left-radius: 6px;
+        }
+
+        .message-content {
+            font-size: 16px;
+            line-height: 1.4;
+        }
+
+        .message-time {
+            font-size: 12px;
+            margin-top: 5px;
+            opacity: 0.7;
+            text-align: right;
+        }
+
+        .chat-input {
+            display: flex;
+            padding: 15px;
+            border-top: 1px solid var(--light-gray);
+        }
+
+        .chat-input textarea {
+            flex: 1;
+            border: 1px solid var(--light-gray);
+            border-radius: 18px;
+            padding: 12px 16px;
+            font-size: 16px;
+            resize: none;
+            outline: none;
+        }
+
+        .send-button {
+            margin-left: 15px;
+            padding: 0 20px;
+            background-color: var(--primary-red);
+            color: white;
+            border: none;
+            border-radius: 18px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            align-self: flex-end;
+        }
+
+        .send-button:disabled {
+            background-color: var(--light-gray);
+            color: var(--medium-gray);
+            cursor: not-allowed;
+        }
+
+        .auth-container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .auth-form h2 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+            color: var(--dark-gray);
+        }
+
+        .auth-button {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary-red);
+            color: white;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .auth-toggle {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+            color: var(--medium-gray);
+        }
+
+        .auth-toggle span {
+            color: var(--primary-red);
+            cursor: pointer;
+        }
+
+        .data-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .data-action {
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .data-action h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--dark-gray);
+        }
+
+        .data-action p {
+            font-size: 14px;
+            color: var(--medium-gray);
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .status-message {
+            margin-top: 10px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .status-message.success {
+            background-color: rgba(52, 199, 89, 0.1);
+            color: #34C759;
+        }
+
+        .status-message.error {
+            background-color: rgba(255, 59, 48, 0.1);
+            color: var(--primary-red);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .user-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .logout-button {
+            padding: 6px 12px;
+            background-color: var(--light-gray);
+            color: var(--dark-gray);
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .model-selector {
+            margin-bottom: 15px;
+        }
+
+        .model-selector select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--light-gray);
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .zhipu-login {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--light-gray);
+        }
+
+        .zhipu-login h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--dark-gray);
+        }
+
+        .zhipu-link {
+            color: var(--primary-red);
+            text-decoration: underline;
+            margin-left: 5px;
+        }
+
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--medium-gray);
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-10px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // 主应用组件
+        function App() {
+            const [activeTab, setActiveTab] = useState('guide'); // 'guide' 或 'ai'
+            
+            return (
+                <div className="app-container">
+                    <div className="header">
+                        <h1>小红卡</h1>
+                        <p>并发症管理指引生成器</p>
+                    </div>
+                    
+                    <div className="tabs">
+                        <div 
+                            className={`tab ${activeTab === 'guide' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('guide')}
+                        >
+                            指引生成
+                        </div>
+                        <div 
+                            className={`tab ${activeTab === 'ai' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('ai')}
+                        >
+                            AI助手
+                        </div>
+                    </div>
+                    
+                    <div className="tab-content">
+                        {activeTab === 'guide' ? <GuideGenerator /> : <AIAssistant />}
+                    </div>
+                </div>
+            );
+        }
+
+        // 指引生成器组件
+        function GuideGenerator() {
+            const [currentStep, setCurrentStep] = useState(0);
+            const [selectedComplications, setSelectedComplications] = useState([]);
+            const [medicalInfo, setMedicalInfo] = useState({
+                name: '',
+                age: '',
+                bloodType: '',
+                mainDiagnosis: '',
+                surgeryHistory: '',
+                allergies: '',
+                otherDiseases: '',
+                isOnAnticoagulation: false,
+                medicationType: '',
+                lastTaken: '',
+                stopReason: ''
+            });
+            const [emergencyContacts, setEmergencyContacts] = useState([]);
+            const [hospitals, setHospitals] = useState([]);
+            const [newContact, setNewContact] = useState({ name: '', phone: '', relationship: '' });
+            const [newHospital, setNewHospital] = useState({ name: '', emergency: '', address: '', features: '' });
+            
+            // 从localStorage加载数据
+            useEffect(() => {
+                const savedComplications = JSON.parse(localStorage.getItem('selectedComplications') || '[]');
+                const savedMedicalInfo = JSON.parse(localStorage.getItem('medicalInfo') || '{}');
+                const savedContacts = JSON.parse(localStorage.getItem('emergencyContacts') || '[]');
+                const savedHospitals = JSON.parse(localStorage.getItem('hospitals') || '[]');
+                
+                if (savedComplications.length > 0) {
+                    setSelectedComplications(savedComplications);
+                }
+                
+                if (Object.keys(savedMedicalInfo).length > 0) {
+                    setMedicalInfo(savedMedicalInfo);
+                }
+                
+                if (savedContacts.length > 0) {
+                    setEmergencyContacts(savedContacts);
+                }
+                
+                if (savedHospitals.length > 0) {
+                    setHospitals(savedHospitals);
+                }
+            }, []);
+            
+            // 保存数据到localStorage
+            useEffect(() => {
+                localStorage.setItem('selectedComplications', JSON.stringify(selectedComplications));
+            }, [selectedComplications]);
+            
+            useEffect(() => {
+                localStorage.setItem('medicalInfo', JSON.stringify(medicalInfo));
+            }, [medicalInfo]);
+            
+            useEffect(() => {
+                localStorage.setItem('emergencyContacts', JSON.stringify(emergencyContacts));
+            }, [emergencyContacts]);
+            
+            useEffect(() => {
+                localStorage.setItem('hospitals', JSON.stringify(hospitals));
+            }, [hospitals]);
+            
+            const complications = [
+                { id: 'bleeding', name: '消化道出血', description: '呕血、黑便等症状的紧急处理' },
+                { id: 'obstruction', name: '肠梗阻', description: '腹痛、呕吐、腹胀等症状的紧急处理' },
+                { id: 'biliary', name: '胆道梗阻', description: '黄疸、发热等症状管理' },
+                { id: 'infection', name: '感染', description: '发热、感染征象监测' },
+                { id: 'ascites', name: '腹水', description: '腹胀、腹水症状管理' },
+                { id: 'thrombosis', name: '血栓', description: '血栓形成预防和处理' }
+            ];
+            
+            const handleComplicationChange = (id) => {
+                if (selectedComplications.includes(id)) {
+                    setSelectedComplications(selectedComplications.filter(c => c !== id));
+                } else {
+                    setSelectedComplications([...selectedComplications, id]);
+                }
+            };
+            
+            const handleMedicalInfoChange = (field, value) => {
+                setMedicalInfo({
+                    ...medicalInfo,
+                    [field]: value
+                });
+            };
+            
+            const handleAddContact = () => {
+                if (newContact.name && newContact.phone && newContact.relationship) {
+                    setEmergencyContacts([...emergencyContacts, newContact]);
+                    setNewContact({ name: '', phone: '', relationship: '' });
+                }
+            };
+            
+            const handleRemoveContact = (index) => {
+                const newContacts = [...emergencyContacts];
+                newContacts.splice(index, 1);
+                setEmergencyContacts(newContacts);
+            };
+            
+            const handleAddHospital = () => {
+                if (newHospital.name && newHospital.emergency && newHospital.address) {
+                    setHospitals([...hospitals, newHospital]);
+                    setNewHospital({ name: '', emergency: '', address: '', features: '' });
+                }
+            };
+            
+            const handleRemoveHospital = (index) => {
+                const newHospitals = [...hospitals];
+                newHospitals.splice(index, 1);
+                setHospitals(newHospitals);
+            };
+            
+            const nextStep = () => {
+                if (currentStep < 3) {
+                    setCurrentStep(currentStep + 1);
+                }
+            };
+            
+            const prevStep = () => {
+                if (currentStep > 0) {
+                    setCurrentStep(currentStep - 1);
+                }
+            };
+            
+            const canProceed = () => {
+                switch (currentStep) {
+                    case 0: return selectedComplications.length > 0;
+                    case 1: return medicalInfo.name && medicalInfo.bloodType;
+                    case 2: return emergencyContacts.length > 0 || hospitals.length > 0;
+                    default: return true;
+                }
+            };
+            
+            const renderStep = () => {
+                switch (currentStep) {
+                    case 0:
+                        return (
+                            <div>
+                                <h2>选择并发症类型</h2>
+                                <div className="checkbox-group">
+                                    {complications.map(comp => (
+                                        <div 
+                                            key={comp.id}
+                                            className={`checkbox-item ${selectedComplications.includes(comp.id) ? 'selected' : ''}`}
+                                            onClick={() => handleComplicationChange(comp.id)}
+                                        >
+                                            <input 
+                                                type="checkbox" 
+                                                checked={selectedComplications.includes(comp.id)}
+                                                onChange={() => {}}
+                                            />
+                                            <div className="checkbox-item-content">
+                                                <h4>{comp.name}</h4>
+                                                <p>{comp.description}</p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        );
+                    case 1:
+                        return (
+                            <div>
+                                <h2>填写个人医疗信息</h2>
+                                <div className="form-group">
+                                    <label>姓名 *</label>
+                                    <input 
+                                        type="text" 
+                                        value={medicalInfo.name}
+                                        onChange={(e) => handleMedicalInfoChange('name', e.target.value)}
+                                        placeholder="请填写患者真实姓名"
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label>年龄</label>
+                                    <input 
+                                        type="text" 
+                                        value={medicalInfo.age}
+                                        onChange={(e) => handleMedicalInfoChange('age', e.target.value)}
+                                        placeholder="请填写患者年龄"
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label>血型 *</label>
+                                    <select 
+                                        value={medicalInfo.bloodType}
+                                        onChange={(e) => handleMedicalInfoChange('bloodType', e.target.value)}
+                                    >
+                                        <option value="">请选择血型</option>
+                                        <option value="A型">A型</option>
+                                        <option value="B型">B型</option>
+                                        <option value="AB型">AB型</option>
+                                        <option value="O型">O型</option>
+                                    </select>
+                                </div>
+                                <div className="form-group">
+                                    <label>主要诊断</label>
+                                    <input 
+                                        type="text" 
+                                        value={medicalInfo.mainDiagnosis}
+                                        onChange={(e) => handleMedicalInfoChange('mainDiagnosis', e.target.value)}
+                                        placeholder="如：胰腺癌、胃癌等"
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label>手术史</label>
+                                    <textarea 
+                                        value={medicalInfo.surgeryHistory}
+                                        onChange={(e) => handleMedicalInfoChange('surgeryHistory', e.target.value)}
+                                        placeholder="请填写手术史"
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label>过敏史</label>
+                                    <input 
+                                        type="text" 
+                                        value={medicalInfo.allergies}
+                                        onChange={(e) => handleMedicalInfoChange('allergies', e.target.value)}
+                                        placeholder="请填写过敏史"
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label>其他疾病</label>
+                                    <input 
+                                        type="text" 
+                                        value={medicalInfo.otherDiseases}
+                                        onChange={(e) => handleMedicalInfoChange('otherDiseases', e.target.value)}
+                                        placeholder="请填写其他疾病"
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label>⚠️ 抗凝治疗信息</label>
+                                    <select 
+                                        value={medicalInfo.isOnAnticoagulation ? 'true' : 'false'}
+                                        onChange={(e) => handleMedicalInfoChange('isOnAnticoagulation', e.target.value === 'true')}
+                                    >
+                                        <option value="false">否</option>
+                                        <option value="true">是</option>
+                                    </select>
+                                </div>
+                                {medicalInfo.isOnAnticoagulation && (
+                                    <>
+                                        <div className="form-group">
+                                            <label>抗凝药物种类</label>
+                                            <input 
+                                                type="text" 
+                                                value={medicalInfo.medicationType}
+                                                onChange={(e) => handleMedicalInfoChange('medicationType', e.target.value)}
+                                                placeholder="请填写抗凝药物种类"
+                                            />
+                                        </div>
+                                        <div className="form-group">
+                                            <label>最后服用时间</label>
+                                            <input 
+                                                type="text" 
+                                                value={medicalInfo.lastTaken}
+                                                onChange={(e) => handleMedicalInfoChange('lastTaken', e.target.value)}
+                                                placeholder="请填写最后服用时间"
+                                            />
+                                        </div>
+                                        <div className="form-group">
+                                            <label>停药原因</label>
+                                            <input 
+                                                type="text" 
+                                                value={medicalInfo.stopReason}
+                                                onChange={(e) => handleMedicalInfoChange('stopReason', e.target.value)}
+                                                placeholder="请填写停药原因"
+                                            />
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+                        );
+                    case 2:
+                        return (
+                            <div>
+                                <h2>添加紧急联系人和医院信息</h2>
+                                <h3>⚠️ 紧急联系人</h3>
+                                {emergencyContacts.map((contact, index) => (
+                                    <div key={index} className="contact-item">
+                                        <button className="remove-button" onClick={() => handleRemoveContact(index)}>×</button>
+                                        <h4>{contact.name} ({contact.relationship})</h4>
+                                        <p>电话: {contact.phone}</p>
+                                    </div>
+                                ))}
+                                <div className="add-button" onClick={() => {
+                                    const nameInput = document.getElementById('contact-name');
+                                    const phoneInput = document.getElementById('contact-phone');
+                                    const relationshipInput = document.getElementById('contact-relationship');
+                                    
+                                    if (nameInput.value && phoneInput.value && relationshipInput.value) {
+                                        handleAddContact();
+                                    }
+                                }}>
+                                    + 添加紧急联系人
+                                </div>
+                                <div className="form-group">
+                                    <label>姓名</label>
+                                    <input 
+                                        id="contact-name"
+                                        type="text" 
+                                        value={newContact.name}
+                                        onChange={(e) => setNewContact({...newContact, name: e.target.value})}
+                                        placeholder="请填写联系人姓名"
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label>电话</label>
+                                    <input 
+                                        id="contact-phone"
+                                        type="text" 
+                                        value={newContact.phone}
+                                        onChange={(e) => setNewContact({...newContact, phone: e.target.value})}
+                                        placeholder="请填写联系人电话"
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label>关系</label>
+                                    <input 
+                                        id="contact-relationship"
+                                        type="text" 
+                                        value={newContact.relationship}
+                                        onChange={(e) => setNewContact({...newContact, relationship: e.target.value})}
+                                        placeholder="请填写与患者关系"
+                                    />
+                                </div>
+                                
+                                <h3>⚠️ 医院信息</h3>
+                                {hospitals.map((hospital, index) => (
+                                    <div key={index} className="hospital-item">
+                                        <button className="remove-button" onClick={() => handleRemoveHospital(index)}>×</button>
+                                        <h4>{hospital.name}</h4>
+                                        <p>急诊: {hospital.emergency}</p>
+                                        <p>地址: {hospital.address}</p>
+                                        {hospital.features && <p>特色: {hospital.features}</p>}
+                                    </div>
+                                ))}
+                                <div className="add-button" onClick={() => {
+                                    const nameInput = document.getElementById('hospital-name');
+                                    const emergencyInput = document.getElementById('hospital-emergency');
+                                    const addressInput = document.getElementById('hospital-address');
+                                    
+                                    if (nameInput.value && emergencyInput.value && addressInput.value) {
+                                        handleAddHospital();
+                                    }
+                                }}>
+                                    + 添加医院信息
+                                </div>
+                                <div className="form-group">
+                                    <label>医院名称</label>
+                                    <input 
+                                        id="hospital-name"
+                                        type="text" 
+                                        value={newHospital.name}
+                                        onChange={(e) => setNewHospital({...newHospital, name: e.target.value})}
+                                        placeholder="请填写医院名称"
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label>急诊电话</label>
+                                    <input 
+                                        id="hospital-emergency"
+                                        type="text" 
+                                        value={newHospital.emergency}
+                                        onChange={(e) => setNewHospital({...newHospital, emergency: e.target.value})}
+                                        placeholder="请填写急诊电话"
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label>地址</label>
+                                    <input 
+                                        id="hospital-address"
+                                        type="text" 
+                                        value={newHospital.address}
+                                        onChange={(e) => setNewHospital({...newHospital, address: e.target.value})}
+                                        placeholder="请填写医院地址"
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label>特色</label>
+                                    <input 
+                                        type="text" 
+                                        value={newHospital.features}
+                                        onChange={(e) => setNewHospital({...newHospital, features: e.target.value})}
+                                        placeholder="请填写医院特色（选填）"
+                                    />
+                                </div>
+                            </div>
+                        );
+                    case 3:
+                        return <CardPreview 
+                            selectedComplications={selectedComplications}
+                            medicalInfo={medicalInfo}
+                            emergencyContacts={emergencyContacts}
+                            hospitals={hospitals}
+                        />;
+                    default:
+                        return null;
+                }
+            };
+            
+            return (
+                <div>
+                    <div className="steps">
+                        <div className={`step ${currentStep >= 0 ? 'active' : ''}`}>
+                            <div className="step-number">1</div>
+                            <div className="step-title">选择并发症类型</div>
+                        </div>
+                        <div className={`step ${currentStep >= 1 ? 'active' : ''}`}>
+                            <div className="step-number">2</div>
+                            <div className="step-title">填写个人医疗信息</div>
+                        </div>
+                        <div className={`step ${currentStep >= 2 ? 'active' : ''}`}>
+                            <div className="step-number">3</div>
+                            <div className="step-title">添加紧急联系人和医院信息</div>
+                        </div>
+                        <div className={`step ${currentStep >= 3 ? 'active' : ''}`}>
+                            <div className="step-number">4</div>
+                            <div className="step-title">预览和下载</div>
+                        </div>
+                    </div>
+                    
+                    <div className="step-content">
+                        {renderStep()}
+                    </div>
+                    
+                    {currentStep < 3 && (
+                        <div className="navigation">
+                            <button 
+                                className="nav-button prev" 
+                                onClick={prevStep}
+                                disabled={currentStep === 0}
+                            >
+                                上一步
+                            </button>
+                            <button 
+                                className={`nav-button ${currentStep === 2 ? 'generate' : 'next'}`} 
+                                onClick={nextStep}
+                                disabled={!canProceed()}
+                            >
+                                {currentStep === 2 ? '生成指引卡片' : '下一步'}
+                            </button>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        // 卡片预览组件
+        function CardPreview({ selectedComplications, medicalInfo, emergencyContacts, hospitals }) {
+            const cardRef = useRef(null);
+            const [isGenerating, setIsGenerating] = useState(false);
+            
+            const handleDownloadImage = async () => {
+                if (!cardRef.current) return;
+                
+                setIsGenerating(true);
+                try {
+                    const canvas = await html2canvas(cardRef.current, {
+                        scale: 2,
+                        backgroundColor: '#FFFFFF'
+                    });
+                    const image = canvas.toDataURL('image/png');
+                    const link = document.createElement('a');
+                    link.href = image;
+                    link.download = `${medicalInfo.name}_并发症管理指引.png`;
+                    link.click();
+                } catch (error) {
+                    console.error('生成图片失败:', error);
+                    alert('生成图片失败，请重试');
+                } finally {
+                    setIsGenerating(false);
+                }
+            };
+            
+            const handleDownloadHTML = () => {
+                const htmlContent = `
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${medicalInfo.name}的并发症管理指引</title>
+  <style>
+    body {
+      font-family: "PingFang SC", "Helvetica Neue", sans-serif;
+      background-color: #F2F2F7;
+      color: #1C1C1E;
+      line-height: 1.6;
+      padding: 20px;
+    }
+    .card-container {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: #FFFFFF;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      padding: 30px;
+    }
+    .card-header {
+      border-bottom: 1px solid #F2F2F7;
+      padding-bottom: 20px;
+      margin-bottom: 20px;
+    }
+    .card-header h2 {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: #FF3B30;
+    }
+    .card-info {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .info-tag {
+      font-size: 14px;
+      background-color: #F2F2F7;
+      padding: 6px 12px;
+      border-radius: 20px;
+    }
+    .card-section {
+      margin-bottom: 25px;
+    }
+    .card-section h3 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: #1C1C1E;
+    }
+    .warning-box {
+      background-color: rgba(255, 59, 48, 0.1);
+      border-left: 4px solid #FF3B30;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 0 8px 8px 0;
+    }
+    .warning-title {
+      font-weight: 600;
+      color: #FF3B30;
+      margin-bottom: 10px;
+    }
+    .contact-item, .hospital-item {
+      background-color: #F2F2F7;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+    .contact-item h4, .hospital-item h4 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+    @media print {
+      body {
+        background-color: #FFFFFF;
+        padding: 0;
+      }
+      .card-container {
+        box-shadow: none;
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="card-container">
+    <div class="card-header">
+      <h2>${medicalInfo.name}的并发症管理指引</h2>
+      <div class="card-info">
+        <div class="info-tag">血型: ${medicalInfo.bloodType}</div>
+        <div class="info-tag">年龄: ${medicalInfo.age}</div>
+        <div class="info-tag">主要诊断: ${medicalInfo.mainDiagnosis}</div>
+      </div>
+    </div>
+    
+    <div class="card-section">
+      <h3>🆘 急救指导步骤</h3>
+      ${selectedComplications.includes('bleeding') ? `
+        <div class="warning-box">
+          <div class="warning-title">消化道出血急救</div>
+          <p>立即拨打120，告知消化道出血</p>
+          <p>绝对禁食禁水，保持呼吸道通畅</p>
+          <p>收集呕吐物，给医生查看性质</p>
+        </div>
+      ` : ''}
+      
+      ${selectedComplications.includes('obstruction') ? `
+        <div class="warning-box">
+          <div class="warning-title">肠梗阻急救</div>
+          <p>立即拨打120，告知肠梗阻症状</p>
+          <p>绝对禁食禁水，禁止使用止痛药</p>
+          <p>禁止催吐，禁止热敷腹部</p>
+        </div>
+      ` : ''}
+      
+      ${selectedComplications.includes('biliary') ? `
+        <div class="warning-box">
+          <div class="warning-title">胆道梗阻急救</div>
+          <p>立即拨打120，告知黄疸、发热症状</p>
+          <p>绝对禁食禁水，监测体温变化</p>
+          <p>记录腹痛、黄疸变化情况</p>
+        </div>
+      ` : ''}
+    </div>
+    
+    <div class="card-section">
+      <h3>🔍 病情诊断关键指引</h3>
+      <p>密切观察生命体征：血压、心率、体温</p>
+      <p>记录症状变化：腹痛、呕吐、腹胀、黄疸等</p>
+      <p>注意特殊症状：呕血、黑便、停止排气排便</p>
+    </div>
+    
+    <div class="card-section">
+      <h3>🛡️ 日常注意和预防</h3>
+      <p>饮食：避免难消化食物（糯米、坚果等）</p>
+      <p>活动：保持适当活动，促进肠蠕动</p>
+      <p>用药：遵医嘱用药，避免自行用药</p>
+    </div>
+    
+    <div class="card-section">
+      <h3>🏥 辅助服务</h3>
+      
+      <h4>紧急联系人</h4>
+      ${emergencyContacts.map(contact => `
+        <div class="contact-item">
+          <h4>${contact.name} (${contact.relationship})</h4>
+          <p>电话: ${contact.phone}</p>
+        </div>
+      `).join('')}
+      
+      <h4>医院信息</h4>
+      ${hospitals.map(hospital => `
+        <div class="hospital-item">
+          <h4>${hospital.name}</h4>
+          <p>急诊: ${hospital.emergency}</p>
+          <p>地址: ${hospital.address}</p>
+          ${hospital.features ? `<p>特色: ${hospital.features}</p>` : ''}
+        </div>
+      `).join('')}
+    </div>
+  </div>
+</body>
+</html>
+                `;
+                
+                const blob = new Blob([htmlContent], { type: 'text/html' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `${medicalInfo.name}_并发症管理指引.html`;
+                link.click();
+                URL.revokeObjectURL(url);
+            };
+            
+            const handleExportData = () => {
+                const data = {
+                    selectedComplications,
+                    medicalInfo,
+                    emergencyContacts,
+                    hospitals,
+                    exportDate: new Date().toISOString()
+                };
+                
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `小红卡配置_${new Date().toISOString().split('T')[0]}.json`;
+                link.click();
+                URL.revokeObjectURL(url);
+            };
+            
+            const handleImportData = (e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    try {
+                        const data = JSON.parse(event.target?.result);
+                        
+                        // 验证数据格式
+                        if (!data.selectedComplications || !data.medicalInfo) {
+                            throw new Error('无效的配置文件格式');
+                        }
+                        
+                        // 保存到localStorage
+                        localStorage.setItem('selectedComplications', JSON.stringify(data.selectedComplications));
+                        localStorage.setItem('medicalInfo', JSON.stringify(data.medicalInfo));
+                        localStorage.setItem('emergencyContacts', JSON.stringify(data.emergencyContacts || []));
+                        localStorage.setItem('hospitals', JSON.stringify(data.hospitals || []));
+                        
+                        alert('配置导入成功！请刷新页面');
+                    } catch (error) {
+                        alert('配置文件格式错误，请选择有效的配置文件');
+                        console.error('导入失败:', error);
+                    }
+                };
+                reader.readAsText(file);
+            };
+            
+            const handleClearData = () => {
+                if (window.confirm('确定要清空所有数据吗？此操作不可恢复。')) {
+                    localStorage.clear();
+                    alert('数据已清空，请刷新页面');
+                }
+            };
+            
+            return (
+                <div>
+                    <div className="card-preview" ref={cardRef}>
+                        <div className="card-header">
+                            <h2>{medicalInfo.name}的并发症管理指引</h2>
+                            <div className="card-info">
+                                <div className="info-tag">血型: {medicalInfo.bloodType}</div>
+                                <div className="info-tag">年龄: {medicalInfo.age}</div>
+                                <div className="info-tag">主要诊断: {medicalInfo.mainDiagnosis}</div>
+                            </div>
+                        </div>
+                        
+                        <div className="card-section">
+                            <h3><span className="icon">🆘</span> 急救指导步骤</h3>
+                            {selectedComplications.includes('bleeding') && (
+                                <div className="warning-box">
+                                    <div className="warning-title">消化道出血急救</div>
+                                    <p>立即拨打120，告知消化道出血</p>
+                                    <p>绝对禁食禁水，保持呼吸道通畅</p>
+                                    <p>收集呕吐物，给医生查看性质</p>
+                                </div>
+                            )}
+                            
+                            {selectedComplications.includes('obstruction') && (
+                                <div className="warning-box">
+                                    <div className="warning-title">肠梗阻急救</div>
+                                    <p>立即拨打120，告知肠梗阻症状</p>
+                                    <p>绝对禁食禁水，禁止使用止痛药</p>
+                                    <p>禁止催吐，禁止热敷腹部</p>
+                                </div>
+                            )}
+                            
+                            {selectedComplications.includes('biliary') && (
+                                <div className="warning-box">
+                                    <div className="warning-title">胆道梗阻急救</div>
+                                    <p>立即拨打120，告知黄疸、发热症状</p>
+                                    <p>绝对禁食禁水，监测体温变化</p>
+                                    <p>记录腹痛、黄疸变化情况</p>
+                                </div>
+                            )}
+                        </div>
+                        
+                        <div className="card-section">
+                            <h3><span className="icon">🔍</span> 病情诊断关键指引</h3>
+                            <p>密切观察生命体征：血压、心率、体温</p>
+                            <p>记录症状变化：腹痛、呕吐、腹胀、黄疸等</p>
+                            <p>注意特殊症状：呕血、黑便、停止排气排便</p>
+                        </div>
+                        
+                        <div className="card-section">
+                            <h3><span className="icon">🛡️</span> 日常注意和预防</h3>
+                            <p>饮食：避免难消化食物（糯米、坚果等）</p>
+                            <p>活动：保持适当活动，促进肠蠕动</p>
+                            <p>用药：遵医嘱用药，避免自行用药</p>
+                        </div>
+                        
+                        <div className="card-section">
+                            <h3><span className="icon">🏥</span> 辅助服务</h3>
+                            
+                            <h4>紧急联系人</h4>
+                            {emergencyContacts.map((contact, index) => (
+                                <div key={index} className="contact-item">
+                                    <h4>{contact.name} ({contact.relationship})</h4>
+                                    <p>电话: {contact.phone}</p>
+                                </div>
+                            ))}
+                            
+                            <h4>医院信息</h4>
+                            {hospitals.map((hospital, index) => (
+                                <div key={index} className="hospital-item">
+                                    <h4>{hospital.name}</h4>
+                                    <p>急诊: {hospital.emergency}</p>
+                                    <p>地址: {hospital.address}</p>
+                                    {hospital.features && <p>特色: {hospital.features}</p>}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                    
+                    <div className="action-buttons">
+                        <button 
+                            className="action-button primary" 
+                            onClick={handleDownloadImage}
+                            disabled={isGenerating}
+                        >
+                            {isGenerating ? '生成中...' : '下载为图片'}
+                        </button>
+                        <button className="action-button primary" onClick={handleDownloadHTML}>
+                            下载为HTML
+                        </button>
+                    </div>
+                    
+                    <div className="data-actions">
+                        <div className="data-action">
+                            <h3>导出配置</h3>
+                            <p>将当前配置导出为JSON文件，可在其他设备上导入使用</p>
+                            <button className="action-button primary" onClick={handleExportData}>
+                                导出配置
+                            </button>
+                        </div>
+                        
+                        <div className="data-action">
+                            <h3>导入配置</h3>
+                            <p>从JSON文件导入配置，替换当前数据</p>
+                            <label className="action-button secondary">
+                                选择文件
+                                <input 
+                                    type="file" 
+                                    accept=".json" 
+                                    onChange={handleImportData} 
+                                    className="file-input"
+                                />
+                            </label>
+                        </div>
+                        
+                        <div className="data-action">
+                            <h3>清空数据</h3>
+                            <p>清除所有本地存储的数据，恢复初始状态</p>
+                            <button className="action-button secondary" onClick={handleClearData}>
+                                清空数据
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // AI助手组件
+        function AIAssistant() {
+            const [isLogin, setIsLogin] = useState(false);
+            const [isLoggedIn, setIsLoggedIn] = useState(false);
+            const [username, setUsername] = useState('');
+            const [password, setPassword] = useState('');
+            const [confirmPassword, setConfirmPassword] = useState('');
+            const [email, setEmail] = useState('');
+            const [messages, setMessages] = useState([]);
+            const [inputText, setInputText] = useState('');
+            const [isLoading, setIsLoading] = useState(false);
+            const [selectedModel, setSelectedModel] = useState('glm-4.5-air'); // 默认使用glm-4.5-air（推荐）
+            const [zhipuApiKey, setZhipuApiKey] = useState('');
+            const messagesEndRef = useRef(null);
+
+            // 模拟登录状态
+            useEffect(() => {
+                const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
+                if (loggedIn) {
+                    setIsLoggedIn(true);
+                    setUsername(localStorage.getItem('username') || '');
+                    const savedApiKey = localStorage.getItem('zhipuApiKey');
+                    if (savedApiKey) {
+                        setZhipuApiKey(savedApiKey);
+                    }
+                    const savedModel = localStorage.getItem('selectedModel');
+                    if (savedModel) {
+                        setSelectedModel(savedModel);
+                    }
+                }
+            }, []);
+
+            // 滚动到最新消息
+            useEffect(() => {
+                scrollToBottom();
+            }, [messages]);
+
+            const scrollToBottom = () => {
+                messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+            };
+
+            const handleRegister = () => {
+                if (!username || !password) {
+                    alert('请填写用户名和密码');
+                    return;
+                }
+                if (password !== confirmPassword) {
+                    alert('两次输入的密码不一致');
+                    return;
+                }
+                
+                // 模拟注册成功
+                alert('注册成功！请登录');
+                setIsLogin(true);
+            };
+
+            const handleLogin = () => {
+                if (!username || !password) {
+                    alert('请填写用户名和密码');
+                    return;
+                }
+                
+                if (!zhipuApiKey) {
+                    alert('请输入智谱AI API密钥');
+                    return;
+                }
+                
+                // 模拟登录成功
+                setIsLoggedIn(true);
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('username', username);
+                localStorage.setItem('zhipuApiKey', zhipuApiKey);
+                localStorage.setItem('selectedModel', selectedModel);
+                
+                // 添加欢迎消息
+                setMessages([
+                    {
+                        id: '1',
+                        text: `您好，${username}！我是您的并发症管理AI助手，当前使用的是${getModelName(selectedModel)}模型。有什么可以帮助您的吗？`,
+                        sender: 'ai',
+                        timestamp: new Date()
+                    }
+                ]);
+            };
+
+            const handleLogout = () => {
+                setIsLoggedIn(false);
+                localStorage.removeItem('isLoggedIn');
+                localStorage.removeItem('username');
+                localStorage.removeItem('zhipuApiKey');
+                localStorage.removeItem('selectedModel');
+                setMessages([]);
+            };
+
+            const getModelName = (model) => {
+                switch(model) {
+                    case 'glm-4.5-air': return 'GLM-4.5-Air（推荐）';
+                    case 'glm-4.5-flash': return 'GLM-4.5-Flash（免费）';
+                    case 'glm-4.5-plus': return 'GLM-4.5-Plus';
+                    case 'glm-4v': return 'GLM-4V';
+                    case 'glm-4-air': return 'GLM-4-Air';
+                    case 'glm-4-airx': return 'GLM-4-AirX';
+                    case 'glm-4-flash': return 'GLM-4-Flash';
+                    default: return model;
+                }
+            };
+
+            const handleSendMessage = async () => {
+                if (!inputText.trim()) return;
+                
+                // 添加用户消息
+                const userMessage = {
+                    id: Date.now().toString(),
+                    text: inputText,
+                    sender: 'user',
+                    timestamp: new Date()
+                };
+                
+                setMessages(prev => [...prev, userMessage]);
+                setInputText('');
+                setIsLoading(true);
+                
+                try {
+                    // 调用智谱AI API
+                    const response = await fetch('https://open.bigmodel.cn/api/paas/v4/chat/completions', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${zhipuApiKey}`
+                        },
+                        body: JSON.stringify({
+                            model: selectedModel,
+                            messages: [
+                                {
+                                    role: 'system',
+                                    content: `# Role: 多病种并发症专业助手
+
+## Profile
+- language: 中文
+- description: 专注于癌症、罕见病等多病种治疗相关并发症管理的专业医疗助手，整合循证医学证据、临床指南和患者经验，提供全周期、多维度支持
+- background: 基于小红卡急症处理指引体系开发的智能辅助系统，融合最新医学研究、临床实践和患者真实经验
+- personality: 专业权威、温暖体贴、耐心细致、反应迅速
+- expertise: 癌症、罕见病、慢性病等多病种治疗相关并发症的预防、识别、处理及康复
+- target_audience: 癌症患者、罕见病患者、慢性病患者、家属及照护者
+- core_framework: 基于小红卡模板的四大模块体系（急救指导、病情诊断、日常预防、辅助服务）
+
+## Skills
+1. **小红卡模板应用能力**: 基于小红卡四大模块提供结构化急救指导，使用红绿灯警示系统进行风险评估和分级
+2. **医学知识整合**: 准确解析最新多病种并发症管理指南，整合罕见病并发症的特殊处理要点
+3. **信息沟通与风险警示**: 使用🔴🟡🟢系统进行风险分层和紧急程度标识，提供120急救话术模板
+4. **应急管理与系统化处理**: 指导并发症早期症状监测，提供家庭处理与医疗干预的分级建议
+5. **多学科协作与资源整合**: 连接癌症、罕见病等专科医生资源，协助建立病友互助网络
+
+## 输出结构规范
+
+### 🚦 红绿灯风险警示系统
+**必须在每次回复开头使用以下格式进行风险分层：**
+
+#### 🔴 紧急危险（立即就医）
+🔴 **紧急警示**：您的症状提示可能存在严重并发症风险
+⚠️ **立即行动**：请立即拨打120或前往最近医院急诊科
+📞 **120话术**："患者为[病种]患者，出现[具体症状]，疑似[并发症名称]"
+
+#### 🟡 需要关注（及时就医）
+🟡 **注意警示**：您的症状需要医疗专业评估
+⏰ **建议时间**：建议24-48小时内就医
+🏥 **就医科室**：[推荐科室]
+
+#### 🟢 相对安全（观察处理）
+🟢 **相对安全**：当前症状可以居家观察处理
+👀 **密切观察**：如出现[恶化症状]请及时就医
+
+### 📋 小红卡四大模块输出格式（必须完整输出，不能删减）
+
+#### 🆘 第一部分：急救指导步骤
+
+## ⚠️ 重要风险提醒
+
+\`\`\`diff
+! 🔴 生命危险信号 - 立即拨打120
+!
+! ✅ [具体危险症状1]
+! ✅ [具体危险症状2]
+! ✅ [具体危险症状3]
+!
+! ❌ 绝对禁止操作
+!
+! • [禁止操作1]
+! • [禁止操作2]
+! • [禁止操作3]
+\`\`\`
+
+## 🆘 1. 立即拨打120（第一步）
+
+### 📞 120报警话术模板
+\`\`\`diff
+! "您好，这里是[并发症名称]急救，患者[姓名]，[年龄]岁[性别]，[既往病史]。
+! 现在出现[具体症状]，患者血型[血型]，可能需要[紧急处理]。
+! 地址是[具体地址]，联系电话[电话号码]。请尽快派救护车！"
+\`\`\`
+
+## 🩸 2. 血型信息（告知120和医院）
+
+### 🔴 关键信息卡
+\`\`\`diff
+! 患者：[姓名]
+! 血型：[血型]
+! 年龄：[年龄]岁
+! 诊断：[主要疾病]
+! 特殊风险：[相关风险因素]
+! 药物过敏：[过敏史]
+! 7天内抗凝治疗：[是/否]
+\`\`\`
+
+## 🏥 3. 指定处置医院（按距离和专业度选择）
+
+### 🚑 首选医院（专科强）
+
+**🥇 [当地三甲医院1]**
+- 急诊科：[急诊科电话]
+- 专科：[相关专科电话]
+- 地址：[医院地址]
+- 优势：[专科技术特点]
+- 120指令："请送往[医院名称]急诊科，患者[并发症]需要紧急处理"
+
+**🥈 [当地三甲医院2]**
+- 急诊科：[急诊科电话]
+- 专科：[相关专科电话]
+- 地址：[医院地址]
+- 优势：[专科技术特点]
+
+**👨‍⚕️ 主治医生联系**
+**[主治医生姓名]：[联系方式]**
+- 立即通知："[医生姓名]，[患者姓名]出现[并发症]，正在送往[医院名称]急诊科，请协助联系接诊"
+
+## 🚗 4. 救护车到达前处理（等待期间）
+
+### 🔴 立即行动（前5分钟）
+\`\`\`diff
+! 1. 体位管理：[具体体位要求]
+! 2. 绝对禁食禁水：[具体要求]
+! 3. 保持呼吸道通畅：[具体操作]
+! 4. [其他紧急处理]
+\`\`\`
+
+### 🏠 家中准备
+**必备物品清单：**
+- [ ] [必备物品1]
+- [ ] [必备物品2]
+- [ ] [必备物品3]
+
+### 🚗 交通安排
+**优先级排序：**
+1. **120急救车**（重症首选）
+2. **出租车/网约车**（告知司机情况）
+3. **避免**：[不适宜的交通方式]
+
+## 🚨 5. 救护车上处理要点
+
+### 📋 给急救医生的信息
+\`\`\`diff
+! 快速汇报：
+! "患者[姓名]，[年龄]岁，[主要疾病]，[血型]血。[时间]开始[症状]，
+! 目前血压[数值]，心率[数值]，意识[状态]。
+! 有[相关风险因素]，怀疑[并发症]。"
+\`\`\`
+
+### 🩺 配合急救处理
+\`\`\`diff
+! 1. 提供病历资料：[具体资料]
+! 2. 协助建立静脉通路：[配合要点]
+! 3. 准备转运：[必需品清单]
+! 4. 家属陪同：[陪同安排]
+\`\`\`
+
+### 📞 路上联系医院
+\`\`\`diff
+! 给急诊科的电话：
+! "您好，120正在送一位[并发症]患者过来，患者[姓名]，[血型]血，[疾病]病史，预计[时间]到达。
+! 患者可能需要[紧急处理]，请准备接诊。"
+\`\`\`
+
+---
+
+#### 🔍 第二部分：病情诊断关键指引
+
+## 🏥 到院流程
+1. **挂号**：直接急诊科，说明[并发症]症状
+2. **分诊**：配合护士快速评估，优先处理
+3. **检查**：[相关检查项目]
+4. **治疗**：[治疗方案]
+
+## 🔬 [并发症]检查指南
+
+### 📸 [检查方法1]（首选初筛）
+**检查优势：**
+- [优势1]
+- [优势2]
+- [优势3]
+
+**典型征象：**
+- **[征象1]**：[具体描述]
+- **[征象2]**：[具体描述]
+- **[征象3]**：[具体描述]
+
+### 🖥️ [检查方法2]（金标准诊断）
+**检查适应症：**
+- [适应症1]
+- [适应症2]
+- [适应症3]
+
+**典型征象：**
+- **[征象1]**：[具体描述]
+- **[征象2]**：[具体描述]
+
+### 🚨 紧急征象（立即手术指征）
+**绝对手术指征：**
+- **[征象1]**：[具体描述]
+- **[征象2]**：[具体描述]
+- **[征象3]**：[具体描述]
+
+## ⚠️ 风险评估体系
+
+### 🔴 高危风险信号
+**立即呼叫120：**
+- [高危症状1]
+- [高危症状2]
+- [高危症状3]
+
+### 🟨 中等风险管理
+**密切观察，准备就医：**
+- [中危症状1]
+- [中危症状2]
+- [中危症状3]
+
+### 🟢 低风险监护
+**居家观察，定期复查：**
+- [低危症状1]
+- [低危症状2]
+- [低危症状3]
+
+### 📊 症状记录表
+
+**日期时间：** ___________
+**[主要症状]：**
+- [ ] [症状选项1]（程度：_______）
+- [ ] [症状选项2]（程度：_______）
+- [ ] [症状选项3]（程度：_______）
+
+**生命体征：**
+- 血压：_______mmHg
+- 心率：_______次/分
+- 体温：_______°C
+- 呼吸：_______次/分
+
+---
+
+#### 🛡️ 第三部分：日常注意和预防
+
+## 🔄 复杂情况处理
+
+### 🏥 [并发症]复发情况说明
+**[并发症]会多次出现，第一次处理大致一样，因此选择三甲医院，但是后续情况会越来越难。**
+
+**复发性[并发症]特点：**
+1. [特点1]
+2. [特点2]
+3. [特点3]
+
+### 🏥 三甲医院选择（推荐顺序）
+**首选：[当地顶级三甲医院]**
+- [专科]：[技术水平]
+- [技术特色]：[具体描述]
+- 联系方式：[医院电话]
+
+**次选：[当地知名三甲医院]**
+- [专科]实力强劲
+- [并发症]处理经验丰富
+- 联系方式：[医院电话]
+
+### 🏥 专科医院选择
+
+**⚠️ 重要提醒：选择需谨慎！建议选择正规医院的专科医生。**
+
+**🥇 [当地专科医院]（推荐）**
+- **地址**：[医院地址]
+- **特点**：[医院特色]
+- **科室主任**：[主任姓名]
+- **推荐医生**：[医生姓名]（[职称]）
+
+**👨‍⚕️ [专科医生]详细信息：**
+- **专业背景**：[教育背景]
+- **专业特长**：[专业领域]
+- **临床经验**：[经验描述]
+- **擅长技术**：
+  - [技术1]
+  - [技术2]
+  - [技术3]
+
+### 🔍 医院选择策略
+**首次[并发症]：** 优先选择三甲医院
+**复发[并发症]：** 可考虑有经验的专科医生
+**紧急情况：** 就近原则，稳定后转院
+**保守治疗：** 可选择有专科的医院
+
+## 🍽️ 饮食预防原则
+
+### ❌ 高风险食物避免
+- **[食物类型1]**：[具体食物]
+- **[食物类型2]**：[具体食物]
+- **[食物类型3]**：[具体食物]
+
+### ✅ 推荐安全饮食
+- **[食物类型1]**：[具体食物]
+- **[食物类型2]**：[具体食物]
+- **[食物类型3]**：[具体食物]
+
+## 🏃‍♂️ 运动和生活方式
+
+### ✅ 适宜活动
+- [活动1]
+- [活动2]
+- [活动3]
+
+### ❌ 避免活动
+- [活动1]
+- [活动2]
+- [活动3]
+
+## 💊 用药安全指导
+
+### ⚠️ 需谨慎使用的药物
+- [药物1]（[原因]）
+- [药物2]（[原因]）
+- [药物3]（[原因]）
+
+### 📋 用药前必须咨询医生
+- [药物类型1]
+- [药物类型2]
+- [药物类型3]
+
+## 🔍 定期监测指标
+
+### 📅 每周自我检查
+- [监测指标1]
+- [监测指标2]
+- [监测指标3]
+
+### 🏥 每月医院复查
+- [检查项目1]
+- [检查项目2]
+- [检查项目3]
+
+## 🏥 康复期管理
+
+### 📅 出院后护理计划
+**第1-3天（急性期后）：**
+- [护理要点1]
+- [护理要点2]
+- [护理要点3]
+
+**第4-7天（恢复期）：**
+- [护理要点1]
+- [护理要点2]
+- [护理要点3]
+
+**第2-4周（稳定期）：**
+- [护理要点1]
+- [护理要点2]
+- [护理要点3]
+
+### 🚨 复发预警信号
+**立即就医的症状：**
+- [症状1]
+- [症状2]
+- [症状3]
+
+---
+
+#### 🏥 第四部分：辅助服务
+
+## 📋 个人医疗信息卡
+
+### 基本信息
+\`\`\`
+姓名：[患者姓名]          血型：[血型]
+年龄：[年龄]岁           身份证：[身份证号]
+联系电话：[联系电话]      紧急联系人：[姓名] [电话]
+\`\`\`
+
+### 疾病史
+- **主要诊断**：[主要疾病]
+- **既往手术**：[手术史]
+- **药物过敏**：[过敏史]
+- **家族史**：[家族病史]
+
+### 当前用药
+- **[药物1]**：[剂量] [用法]
+- **[药物2]**：[剂量] [用法]
+- **[药物3]**：[剂量] [用法]
+
+### 紧急联系人
+1. **[联系人1]**：[关系] [电话]
+2. **[联系人2]**：[关系] [电话]
+3. **[联系人3]**：[关系] [电话]
+
+### 医疗团队
+- **主治医生**：[姓名] [科室] [电话]
+- **护理团队**：[联系方式]
+- **药师咨询**：[联系方式]
+
+## 🏥 医疗资源
+
+### 🚑 急救资源
+- **120急救**：120
+- **医院急诊**：[医院名称] [电话]
+- **专科急诊**：[专科名称] [电话]
+
+### 👨‍⚕️ 专家资源
+- **[专科1]专家**：[姓名] [联系方式]
+- **[专科2]专家**：[姓名] [联系方式]
+- **多学科会诊**：[联系方式]
+
+### 🏥 检查资源
+- **影像检查**：[医院名称] [预约电话]
+- **实验室检查**：[医院名称] [预约电话]
+- **特殊检查**：[检查项目] [预约方式]
+
+### 💊 药物资源
+- **医院药房**：[联系方式]
+- **社区药房**：[地址] [电话]
+- **特殊药物**：[获取途径]
+
+## 🤝 护理服务
+
+### 🏠 居家护理
+- **护理机构**：[机构名称] [联系方式]
+- **护理内容**：[服务项目]
+- **收费标准**：[费用说明]
+
+### 👥 家属培训
+- **护理技能培训**：[培训内容]
+- **急救技能培训**：[培训安排]
+- **心理支持**：[支持资源]
+
+### 📱 在线服务
+- **远程咨询**：[平台名称] [使用方式]
+- **健康监测**：[监测工具]
+- **用药提醒**：[提醒工具]
+
+## 📞 24小时服务热线
+
+### 🚨 紧急联系
+- **120急救**：120
+- **医院总机**：[电话]
+- **急诊科**：[电话]
+
+### 💬 咨询服务
+- **医生咨询**：[电话]
+- **护理咨询**：[电话]
+- **药物咨询**：[电话]
+
+### 🆘 心理支持
+- **心理热线**：[电话]
+- **患者互助**：[联系方式]
+- **家属支持**：[联系方式]
+
+## Rules
+- 🔴红灯情况必须明确指导立即就医
+- 不替代专业医疗诊断，仅提供参考指导
+- 紧急情况优先建议拨打120或立即就医
+- 必须按照小红卡四大模块结构完整输出，不能删减任何部分
+- 必须使用红绿灯警示系统进行风险分层
+- 输出的HTML结构必须与指引卡模板保持一致
+
+作为多病种并发症专业助手，请严格按照上述完整格式提供专业、准确、易于理解的医疗建议，确保四大模块结构完整，不能删减。`
+                                },
+                                {
+                                    role: 'user',
+                                    content: inputText
+                                }
+                            ],
+                            max_tokens: 8000,
+                            temperature: 0.7
+                        })
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error('API请求失败');
+                    }
+                    
+                    const data = await response.json();
+                    const aiResponse = data.choices[0].message.content;
+                    
+                    // 添加AI回复
+                    const aiMessage = {
+                        id: (Date.now() + 1).toString(),
+                        text: aiResponse,
+                        sender: 'ai',
+                        timestamp: new Date()
+                    };
+                    
+                    setMessages(prev => [...prev, aiMessage]);
+                } catch (error) {
+                    console.error('API调用失败:', error);
+                    
+                    // 如果API调用失败，使用本地回复作为后备
+                    const fallbackResponse = getAIResponse(inputText);
+                    const aiMessage = {
+                        id: (Date.now() + 1).toString(),
+                        text: fallbackResponse,
+                        sender: 'ai',
+                        timestamp: new Date()
+                    };
+                    
+                    setMessages(prev => [...prev, aiMessage]);
+                } finally {
+                    setIsLoading(false);
+                }
+            };
+
+            const getAIResponse = (question) => {
+                // 简单的回复逻辑，作为API调用失败时的后备
+                const lowerQuestion = question.toLowerCase();
+                
+                if (lowerQuestion.includes('肠梗阻')) {
+                    return '肠梗阻的常见症状包括腹痛、呕吐、腹胀和停止排气排便。紧急情况下应立即拨打120，并严格禁食禁水。';
+                } else if (lowerQuestion.includes('出血')) {
+                    return '消化道出血的典型症状是呕血和黑便。如果出现大量呕血或黑便伴头晕、心慌，应立即拨打120就医。';
+                } else if (lowerQuestion.includes('饮食')) {
+                    return '并发症患者应避免难消化食物如糯米、坚果，以及易胀气食物如豆类。建议选择流质或半流质易消化食物。';
+                } else if (lowerQuestion.includes('药物')) {
+                    return '请严格遵医嘱用药，特别是抗凝药物。如有任何药物副作用或疑问，请及时咨询医生。';
+                } else {
+                    return '感谢您的提问。关于并发症管理，建议您咨询专业医生获取个性化建议。您还有其他问题吗？';
+                }
+            };
+
+            const handleKeyPress = (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSendMessage();
+                }
+            };
+
+            if (!isLoggedIn) {
+                return (
+                    <div className="auth-container">
+                        {!isLogin ? (
+                            <div className="auth-form">
+                                <h2>注册账号</h2>
+                                <div className="form-group">
+                                    <label>用户名</label>
+                                    <input 
+                                        type="text" 
+                                        value={username} 
+                                        onChange={(e) => setUsername(e.target.value)} 
+                                        placeholder="请输入用户名" 
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label>密码</label>
+                                    <input 
+                                        type="password" 
+                                        value={password} 
+                                        onChange={(e) => setPassword(e.target.value)} 
+                                        placeholder="请输入密码" 
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label>确认密码</label>
+                                    <input 
+                                        type="password" 
+                                        value={confirmPassword} 
+                                        onChange={(e) => setConfirmPassword(e.target.value)} 
+                                        placeholder="请再次输入密码" 
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label>邮箱(选填)</label>
+                                    <input 
+                                        type="email" 
+                                        value={email} 
+                                        onChange={(e) => setEmail(e.target.value)} 
+                                        placeholder="请输入邮箱" 
+                                    />
+                                </div>
+                                <button className="auth-button" onClick={handleRegister}>注册</button>
+                                <div className="auth-toggle">
+                                    已有账号？<span onClick={() => setIsLogin(true)}>登录</span>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="auth-form">
+                                <h2>登录</h2>
+                                <div className="form-group">
+                                    <label>用户名</label>
+                                    <input 
+                                        type="text" 
+                                        value={username} 
+                                        onChange={(e) => setUsername(e.target.value)} 
+                                        placeholder="请输入用户名" 
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label>密码</label>
+                                    <input 
+                                        type="password" 
+                                        value={password} 
+                                        onChange={(e) => setPassword(e.target.value)} 
+                                        placeholder="请输入密码" 
+                                    />
+                                </div>
+                                
+                                <div className="model-selector">
+                                    <label>选择模型</label>
+                                    <select 
+                                        value={selectedModel}
+                                        onChange={(e) => setSelectedModel(e.target.value)}
+                                    >
+                                        <option value="glm-4.5-air">GLM-4.5-Air (推荐)</option>
+                                        <option value="glm-4.5-flash">GLM-4.5-Flash (免费)</option>
+                                        <option value="glm-4.5-plus">GLM-4.5-Plus</option>
+                                        <option value="glm-4v">GLM-4V</option>
+                                        <option value="glm-4-air">GLM-4-Air</option>
+                                        <option value="glm-4-airx">GLM-4-AirX</option>
+                                        <option value="glm-4-flash">GLM-4-Flash</option>
+                                    </select>
+                                </div>
+                                
+                                <div className="zhipu-login">
+                                    <h3>智谱AI API密钥</h3>
+                                    <div className="form-group">
+                                        <label>API密钥</label>
+                                        <input 
+                                            type="password" 
+                                            value={zhipuApiKey} 
+                                            onChange={(e) => setZhipuApiKey(e.target.value)} 
+                                            placeholder="请输入智谱AI API密钥" 
+                                        />
+                                    </div>
+                                    <p>
+                                        没有API密钥？
+                                        <a href="https://open.bigmodel.cn/" target="_blank" className="zhipu-link">点击注册智谱AI</a>
+                                    </p>
+                                </div>
+                                
+                                <button className="auth-button" onClick={handleLogin}>登录</button>
+                                <div className="auth-toggle">
+                                    没有账号？<span onClick={() => setIsLogin(false)}>注册</span>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                );
+            }
+
+            return (
+                <div>
+                    <div className="user-info">
+                        <span>欢迎，{username} (当前模型: {getModelName(selectedModel)})</span>
+                        <button className="logout-button" onClick={handleLogout}>退出</button>
+                    </div>
+                    
+                    <div className="chat-container">
+                        <div className="chat-messages">
+                            {messages.map((message) => (
+                                <div 
+                                    key={message.id} 
+                                    className={`message ${message.sender === 'user' ? 'user-message' : 'ai-message'}`}
+                                >
+                                    <div className="message-content">{message.text}</div>
+                                    <div className="message-time">
+                                        {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                    </div>
+                                </div>
+                            ))}
+                            {isLoading && (
+                                <div className="message ai-message">
+                                    <div className="message-content typing-indicator">
+                                        <span></span>
+                                        <span></span>
+                                        <span></span>
+                                    </div>
+                                </div>
+                            )}
+                            <div ref={messagesEndRef} />
+                        </div>
+                        
+                        <div className="chat-input">
+                            <textarea
+                                value={inputText}
+                                onChange={(e) => setInputText(e.target.value)}
+                                onKeyPress={handleKeyPress}
+                                placeholder="请输入您的问题..."
+                                rows={2}
+                            ></textarea>
+                            <button 
+                                className="send-button" 
+                                onClick={handleSendMessage}
+                                disabled={!inputText.trim() || isLoading}
+                            >
+                                发送
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // 渲染应用
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
