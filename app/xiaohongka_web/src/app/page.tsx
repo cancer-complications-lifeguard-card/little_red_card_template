@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Heart, MessageSquare, Download, Share2, Github, Globe, Mail } from "lucide-react";
 import GuideGenerator from "@/components/red-card/GuideGenerator";
 import AIAssistant from "@/components/red-card/AIAssistant";
+import UnifiedStats from "@/components/UnifiedStats";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState("guide");
@@ -49,6 +50,9 @@ export default function Home() {
             </Badge>
           </div>
         </motion.div>
+
+        {/* Unified Stats */}
+        <UnifiedStats />
 
         {/* Main Content */}
         <motion.div

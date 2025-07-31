@@ -1,141 +1,329 @@
-# 🚀 Welcome to Z.ai Code Scaffold
+# 小红卡 - 并发症管理指引生成器
 
-A modern, production-ready web application scaffold powered by cutting-edge technologies, designed to accelerate your development with [Z.ai](https://chat.z.ai)'s AI-powered coding assistance.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Next.js](https://img.shields.io/badge/Next.js-15-black)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)](https://www.typescriptlang.org/)
+[![Supabase](https://img.shields.io/badge/Supabase-3FCF8E?logo=supabase&logoColor=white)](https://supabase.com/)
 
-## ✨ Technology Stack
+> 🚑 专为癌症、罕见病等多病种患者设计的并发症管理指引生成器，基于小红卡四大模块体系提供专业、全面的医疗支持。
 
-This scaffold provides a robust foundation built with:
+## 🎯 项目简介
 
-### 🎯 Core Framework
-- **⚡ Next.js 15** - The React framework for production with App Router
-- **📘 TypeScript 5** - Type-safe JavaScript for better developer experience
-- **🎨 Tailwind CSS 4** - Utility-first CSS framework for rapid UI development
+小红卡是一个基于 Next.js 15 开发的现代化医疗健康应用，旨在为癌症、罕见病、慢性病患者及其家属提供专业的并发症管理支持。通过结构化的指引生成系统和 AI 智能助手，帮助用户快速获取科学的并发症处理方案。
 
-### 🧩 UI Components & Styling
-- **🧩 shadcn/ui** - High-quality, accessible components built on Radix UI
-- **🎯 Lucide React** - Beautiful & consistent icon library
-- **🌈 Framer Motion** - Production-ready motion library for React
-- **🎨 Next Themes** - Perfect dark mode in 2 lines of code
+### ✨ 核心功能
 
-### 📋 Forms & Validation
-- **🎣 React Hook Form** - Performant forms with easy validation
-- **✅ Zod** - TypeScript-first schema validation
+- **🆘 指引生成器**：基于小红卡四大模块的个性化指引生成
+- **🤖 AI 智能助手**：使用 z-ai-web-dev-sdk 的专业医疗咨询
+- **📊 实时统计**：访问量和服务患者数的实时统计
+- **📱 响应式设计**：支持移动端、平板、桌面端全设备访问
+- **🔄 实时通信**：WebSocket 支持的在线用户统计和实时更新
 
-### 🔄 State Management & Data Fetching
-- **🐻 Zustand** - Simple, scalable state management
-- **🔄 TanStack Query** - Powerful data synchronization for React
-- **🌐 Axios** - Promise-based HTTP client
+## 🚀 快速开始
 
-### 🗄️ Database & Backend
-- **🗄️ Prisma** - Next-generation Node.js and TypeScript ORM
-- **🔐 NextAuth.js** - Complete open-source authentication solution
+### 环境要求
 
-### 🎨 Advanced UI Features
-- **📊 TanStack Table** - Headless UI for building tables and datagrids
-- **🖱️ DND Kit** - Modern drag and drop toolkit for React
-- **📊 Recharts** - Redefined chart library built with React and D3
-- **🖼️ Sharp** - High performance image processing
+- Node.js 18.0 或更高版本
+- npm 或 yarn 包管理器
+- Supabase 账户（用于数据库和实时功能）
 
-### 🌍 Internationalization & Utilities
-- **🌍 Next Intl** - Internationalization library for Next.js
-- **📅 Date-fns** - Modern JavaScript date utility library
-- **🪝 ReactUse** - Collection of essential React hooks for modern development
+### 安装步骤
 
-## 🎯 Why This Scaffold?
+1. **克隆项目**
+   ```bash
+   git clone https://github.com/your-username/xiaohongka.git
+   cd xiaohongka
+   ```
 
-- **🏎️ Fast Development** - Pre-configured tooling and best practices
-- **🎨 Beautiful UI** - Complete shadcn/ui component library with advanced interactions
-- **🔒 Type Safety** - Full TypeScript configuration with Zod validation
-- **📱 Responsive** - Mobile-first design principles with smooth animations
-- **🗄️ Database Ready** - Prisma ORM configured for rapid backend development
-- **🔐 Auth Included** - NextAuth.js for secure authentication flows
-- **📊 Data Visualization** - Charts, tables, and drag-and-drop functionality
-- **🌍 i18n Ready** - Multi-language support with Next Intl
-- **🚀 Production Ready** - Optimized build and deployment settings
-- **🤖 AI-Friendly** - Structured codebase perfect for AI assistance
+2. **安装依赖**
+   ```bash
+   npm install
+   ```
 
-## 🚀 Quick Start
+3. **环境配置**
+   ```bash
+   # 复制环境变量模板
+   cp .env.example .env.local
+   
+   # 编辑环境变量
+   nano .env.local
+   ```
+
+4. **配置 Supabase**
+   ```bash
+   # 在 .env.local 中添加以下配置
+   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+   ```
+
+5. **启动开发服务器**
+   ```bash
+   npm run dev
+   ```
+
+6. **访问应用**
+   打开浏览器访问 [http://localhost:3000](http://localhost:3000)
+
+## 📋 功能特性
+
+### 🆘 指引生成器
+
+基于小红卡四大模块体系的五步式指引生成流程：
+
+1. **并发症选择**：选择需要管理的并发症类型
+2. **医疗信息填写**：填写个人基本信息和医疗历史
+3. **紧急联系人添加**：添加紧急联系人和医院信息
+4. **护理服务配置**：选择合适的护理服务和症状记录管理
+5. **卡片预览生成**：预览和下载个性化指引卡片
+
+### 🤖 AI 智能助手
+
+集成了专业的医疗 AI 助手，提供：
+- **并发症咨询**：专业的并发症管理建议
+- **风险评估**：红绿灯系统的风险分层
+- **急救指导**：紧急情况下的处理步骤
+- **日常预防**：个性化的预防措施和生活指导
+
+### 📊 实时统计系统
+
+- **累计使用人次**：所有时间的总访问量
+- **今日访问量**：当日的访问次数
+- **服务患者数**：通过小红卡服务的患者数量
+- **在线用户数**：当前在线的用户数量
+- **统计日期**：数据统计的日期信息
+
+### 🔄 实时通信
+
+- **WebSocket 支持**：实时用户状态同步
+- **在线状态**：显示当前在线用户数量
+- **实时更新**：统计数据实时更新
+
+## 🛠 技术栈
+
+### 前端技术
+- **框架**：Next.js 15 (App Router)
+- **语言**：TypeScript 5
+- **样式**：Tailwind CSS 4
+- **组件库**：shadcn/ui (New York style)
+- **状态管理**：Zustand + TanStack Query
+- **动画**：Framer Motion
+- **图标**：Lucide React
+
+### 后端技术
+- **API**：Next.js API Routes
+- **数据库**：Supabase (PostgreSQL)
+- **实时通信**：WebSocket / Socket.io
+- **AI集成**：z-ai-web-dev-sdk
+
+### 开发工具
+- **包管理**：npm
+- **代码质量**：ESLint + Prettier
+- **类型检查**：TypeScript
+- **构建工具**：Next.js
+
+## 📁 项目结构
+
+```
+xiaohongka/
+├── src/
+│   ├── app/                    # Next.js App Router
+│   │   ├── api/               # API 路由
+│   │   ├── page.tsx           # 首页
+│   │   └── layout.tsx         # 根布局
+│   ├── components/            # React 组件
+│   │   ├── ui/                # shadcn/ui 组件
+│   │   ├── GuideGenerator.tsx # 指引生成器
+│   │   ├── CardPreview.tsx    # 卡片预览
+│   │   ├── VisitCounter.tsx   # 访问计数器
+│   │   └── AIAssistant.tsx    # AI 助手
+│   ├── lib/                   # 工具库
+│   │   ├── supabase.ts        # Supabase 客户端
+│   │   ├── socket.ts          # WebSocket 配置
+│   │   └── utils.ts           # 工具函数
+│   └── types/                 # TypeScript 类型定义
+├── prisma/                    # Prisma 配置
+├── public/                    # 静态资源
+├── docs/                      # 文档
+├── .env.local                 # 环境变量
+├── package.json               # 项目配置
+├── tailwind.config.js         # Tailwind 配置
+├── tsconfig.json              # TypeScript 配置
+└── README.md                  # 项目说明
+```
+
+## 🔧 配置说明
+
+### 环境变量
 
 ```bash
-# Install dependencies
-npm install
+# Supabase 配置
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 
-# Start development server
-npm run dev
+# 可选配置
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+NEXT_PUBLIC_APP_NAME="小红卡"
+```
 
-# Build for production
+### Supabase 数据库表
+
+```sql
+-- 访问统计表
+CREATE TABLE visit_counters (
+  id BIGINT GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
+  date TIMESTAMPTZ DEFAULT NOW(),
+  visits INTEGER DEFAULT 1,
+  patients INTEGER DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 在线用户表
+CREATE TABLE online_users (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  session_id TEXT UNIQUE NOT NULL,
+  user_agent TEXT,
+  ip_address INET,
+  last_activity TIMESTAMPTZ DEFAULT NOW(),
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+```
+
+## 🚀 部署指南
+
+### Vercel 部署（推荐）
+
+1. **连接代码仓库**
+   ```bash
+   # 在 Vercel 中导入项目
+   # 选择 GitHub 仓库
+   ```
+
+2. **配置环境变量**
+   ```bash
+   # 在 Vercel 项目设置中添加环境变量
+   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_key
+   ```
+
+3. **自动部署**
+   - 推送代码到 GitHub 主分支
+   - Vercel 会自动构建和部署
+
+### Docker 部署
+
+```bash
+# 构建镜像
+docker build -t xiaohongka .
+
+# 运行容器
+docker run -p 3000:3000 --env-file .env.local xiaohongka
+```
+
+### 传统服务器部署
+
+```bash
+# 构建项目
 npm run build
 
-# Start production server
+# 启动生产服务器
 npm start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to see your application running.
+## 📊 性能优化
 
-## 🤖 Powered by Z.ai
+### 前端优化
+- **代码分割**：动态导入大型组件
+- **图片优化**：使用 WebP 格式和懒加载
+- **缓存策略**：浏览器缓存和 CDN 加速
+- **字体优化**：预加载关键字体文件
 
-This scaffold is optimized for use with [Z.ai](https://chat.z.ai) - your AI assistant for:
+### 后端优化
+- **数据库索引**：为常用查询字段创建索引
+- **查询优化**：避免 N+1 查询问题
+- **连接池**：配置适当的连接池大小
+- **CDN 加速**：静态资源通过 CDN 分发
 
-- **💻 Code Generation** - Generate components, pages, and features instantly
-- **🎨 UI Development** - Create beautiful interfaces with AI assistance  
-- **🔧 Bug Fixing** - Identify and resolve issues with intelligent suggestions
-- **📝 Documentation** - Auto-generate comprehensive documentation
-- **🚀 Optimization** - Performance improvements and best practices
+## 🔒 安全考虑
 
-Ready to build something amazing? Start chatting with Z.ai at [chat.z.ai](https://chat.z.ai) and experience the future of AI-powered development!
+### 数据安全
+- **API 密钥管理**：使用环境变量存储敏感信息
+- **数据验证**：所有输入数据进行严格验证
+- **SQL 注入防护**：使用参数化查询
+- **HTTPS 加密**：全站 HTTPS 支持
 
-## 📁 Project Structure
+### 访问控制
+- **CORS 配置**：限制跨域访问
+- **速率限制**：防止 API 滥用
+- **会话管理**：安全的会话标识符生成
 
+### 隐私保护
+- **IP 地址处理**：匿名化处理用户 IP
+- **用户代理**：不存储敏感的浏览器信息
+- **数据最小化**：仅收集必要的统计信息
+
+## 🧪 测试
+
+### 运行测试
+```bash
+# 运行单元测试
+npm test
+
+# 运行端到端测试
+npm run test:e2e
+
+# 代码覆盖率
+npm run test:coverage
 ```
-src/
-├── app/                 # Next.js App Router pages
-├── components/          # Reusable React components
-│   └── ui/             # shadcn/ui components
-├── hooks/              # Custom React hooks
-└── lib/                # Utility functions and configurations
-```
 
-## 🎨 Available Features & Components
+### 测试覆盖
+- **单元测试**：组件和工具函数测试
+- **集成测试**：API 接口和数据库交互测试
+- **端到端测试**：完整用户流程测试
+- **性能测试**：加载速度和并发处理测试
 
-This scaffold includes a comprehensive set of modern web development tools:
+## 🤝 贡献指南
 
-### 🧩 UI Components (shadcn/ui)
-- **Layout**: Card, Separator, Aspect Ratio, Resizable Panels
-- **Forms**: Input, Textarea, Select, Checkbox, Radio Group, Switch
-- **Feedback**: Alert, Toast (Sonner), Progress, Skeleton
-- **Navigation**: Breadcrumb, Menubar, Navigation Menu, Pagination
-- **Overlay**: Dialog, Sheet, Popover, Tooltip, Hover Card
-- **Data Display**: Badge, Avatar, Calendar
+### 开发流程
+1. Fork 项目
+2. 创建功能分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
+4. 推送到分支 (`git push origin feature/AmazingFeature`)
+5. 打开 Pull Request
 
-### 📊 Advanced Data Features
-- **Tables**: Powerful data tables with sorting, filtering, pagination (TanStack Table)
-- **Charts**: Beautiful visualizations with Recharts
-- **Forms**: Type-safe forms with React Hook Form + Zod validation
+### 代码规范
+- 使用 TypeScript 严格模式
+- 遵循 ESLint 和 Prettier 规则
+- 编写清晰的组件和函数文档
+- 提交信息使用约定式提交规范
 
-### 🎨 Interactive Features
-- **Animations**: Smooth micro-interactions with Framer Motion
-- **Drag & Drop**: Modern drag-and-drop functionality with DND Kit
-- **Theme Switching**: Built-in dark/light mode support
+## 📄 许可证
 
-### 🔐 Backend Integration
-- **Authentication**: Ready-to-use auth flows with NextAuth.js
-- **Database**: Type-safe database operations with Prisma
-- **API Client**: HTTP requests with Axios + TanStack Query
-- **State Management**: Simple and scalable with Zustand
+本项目采用 MIT 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情。
 
-### 🌍 Production Features
-- **Internationalization**: Multi-language support with Next Intl
-- **Image Optimization**: Automatic image processing with Sharp
-- **Type Safety**: End-to-end TypeScript with Zod validation
-- **Essential Hooks**: 100+ useful React hooks with ReactUse for common patterns
+## 🙏 致谢
 
-## 🤝 Get Started with Z.ai
+- [Next.js](https://nextjs.org/) - React 框架
+- [Supabase](https://supabase.com/) - 后端即服务
+- [shadcn/ui](https://ui.shadcn.com/) - UI 组件库
+- [Tailwind CSS](https://tailwindcss.com/) - CSS 框架
+- [Framer Motion](https://www.framer.com/motion/) - 动画库
 
-1. **Clone this scaffold** to jumpstart your project
-2. **Visit [chat.z.ai](https://chat.z.ai)** to access your AI coding assistant
-3. **Start building** with intelligent code generation and assistance
-4. **Deploy with confidence** using the production-ready setup
+## 📞 联系我们
+
+- **项目主页**：[https://xiaohongka.example.com](https://xiaohongka.example.com)
+- **问题反馈**：[GitHub Issues](https://github.com/your-username/xiaohongka/issues)
+- **邮件联系**：[contact@xiaohongka.example.com](mailto:contact@xiaohongka.example.com)
+
+## 📚 相关文档
+
+- [开发日志](supabase_dev_log.md)
+- [设计文档](design.md)
+- [Supabase 配置](SUPABASE_COUNTER.md)
+- [API 文档](docs/api.md)
 
 ---
 
-Built with ❤️ for the developer community. Supercharged by [Z.ai](https://chat.z.ai) 🚀
+**最后更新**：2025-06-23  
+**版本**：v2.2.0  
+**维护者**：Z.ai Code Team

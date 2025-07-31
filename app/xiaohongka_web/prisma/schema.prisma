@@ -30,3 +30,11 @@ model Post {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model VisitStats {
+  id        String   @id @default(cuid())
+  date      String   @unique // 日期格式：YYYY-MM-DD
+  count     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
