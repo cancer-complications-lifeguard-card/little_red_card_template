@@ -3,12 +3,13 @@ FROM node:18-alpine AS builder
 
 WORKDIR /app
 
-# 安装系统依赖
+# 安装系统依赖和 pnpm
 RUN apk add --no-cache libc6-compat
+RUN npm install -g pnpm
 
 # 复制依赖文件并安装
-COPY package.json package-lock.json* ./
-RUN npm ci
+COPY package.json pnpm-lock.yaml* ./
+RUN pnpm install --frozen-lockfile
 
 # 复制源代码
 COPY . .
@@ -21,10 +22,10 @@ ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY
 ENV NEXT_TELEMETRY_DISABLED=1
 
 # 构建应用
-RUN npm run build
+RUN pnpm run build
 
 # 清理开发依赖，只保留生产依赖
-RUN npm ci --only=production && npm cache clean --force
+RUN pnpm install --prod --frozen-lockfile
 
 # ---------- 运行阶段 ----------
 FROM node:18-alpine AS runner
@@ -37,6 +38,9 @@ ENV NEXT_TELEMETRY_DISABLED=1
 # 创建用户
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
+
+# 安装 pnpm 和 tsx
+RUN npm install -g pnpm tsx
 
 # 复制必要文件（包括 src 目录和配置文件）
 COPY --from=builder /app/node_modules ./node_modules
