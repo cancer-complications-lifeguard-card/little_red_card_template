@@ -1,8 +1,7 @@
 name: Build and Push Docker Image to GHCR
 
-
 on:
-  workflow_dispatch:
+  workflow_dispatch:  # 手动触发
 
 permissions:
   contents: read       
@@ -21,9 +20,12 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t ghcr.io/${{ github.repository_owner }}/xiaohongka_web:latest .
+          docker build \
+            -t ghcr.io/${{ github.repository_owner }}/xiaohongka_web:latest \
+            -t ghcr.io/${{ github.repository_owner }}/xiaohongka_web:${{ github.sha }} \
+            ./app/xiaohongka_web_with_supabase
 
-      - name: Push Docker image
+      - name: Push Docker images
         run: |
           docker push ghcr.io/${{ github.repository_owner }}/xiaohongka_web:latest
-          docker tag ghcr.io/${{ github.repository_owner }}/xiaohongka_web:latest ghcr.io/${{ github.repository_owner }}/xiaohongka_web:${{ github.sha }}
+          docker push ghcr.io/${{ github.repository_owner }}/xiaohongka_web:${{ github.sha }}
