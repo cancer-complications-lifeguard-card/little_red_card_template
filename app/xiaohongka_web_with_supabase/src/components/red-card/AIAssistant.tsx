@@ -349,7 +349,7 @@ export default function AIAssistant() {
   };
 
   return (
-    <div className="space-y-4 sm:space-y-6 max-w-full overflow-hidden">
+    <div className="space-y-6">
       {/* Error Toast */}
       <AnimatePresence>
         {errorToast.show && (
@@ -385,16 +385,14 @@ export default function AIAssistant() {
           </Select>
           <Badge variant="outline" className="text-xs sm:text-sm text-blue-600 border-blue-200">
             <Sparkles className="h-3 w-3 mr-1" />
-            <span className="text-xs sm:text-sm">智能匹配</span>
+            智能匹配
           </Badge>
         </div>
         
-        <div className="shrink-0">
-          <AuthManager 
-            onAuthChange={handleAuthChange}
-            currentSession={userSession}
-          />
-        </div>
+        <AuthManager 
+          onAuthChange={handleAuthChange}
+          currentSession={userSession}
+        />
       </div>
 
       {/* Status Indicator */}
@@ -522,7 +520,7 @@ export default function AIAssistant() {
             </div>
 
             {/* Input Area */}
-            <div className="flex flex-col sm:flex-row gap-2">
+            <div className="flex gap-2">
               <Textarea
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
@@ -555,39 +553,39 @@ export default function AIAssistant() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.2 }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4"
+          className="grid grid-cols-1 md:grid-cols-3 gap-4"
         >
           <Card className="border-green-200 dark:border-green-800">
-            <CardContent className="p-3 sm:p-4">
+            <CardContent className="p-4">
               <div className="flex items-center gap-2 mb-2">
-                <Heart className="h-4 w-4 sm:h-5 sm:w-5 text-green-500 shrink-0" />
-                <span className="font-medium text-sm sm:text-base">专业可靠</span>
+                <Heart className="h-5 w-5 text-green-500" />
+                <span className="font-medium">专业可靠</span>
               </div>
-              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+              <p className="text-sm text-gray-600 dark:text-gray-400">
                 基于权威医疗知识库，提供专业准确的医疗建议
               </p>
             </CardContent>
           </Card>
 
           <Card className="border-blue-200 dark:border-blue-800">
-            <CardContent className="p-3 sm:p-4">
+            <CardContent className="p-4">
               <div className="flex items-center gap-2 mb-2">
-                <Clock className="h-4 w-4 sm:h-5 sm:w-5 text-blue-500 shrink-0" />
-                <span className="font-medium text-sm sm:text-base">24小时在线</span>
+                <Clock className="h-5 w-5 text-blue-500" />
+                <span className="font-medium">24小时在线</span>
               </div>
-              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+              <p className="text-sm text-gray-600 dark:text-gray-400">
                 随时随地为您提供医疗咨询和急救指导
               </p>
             </CardContent>
           </Card>
 
-          <Card className="border-red-200 dark:border-red-800 sm:col-span-2 lg:col-span-1">
-            <CardContent className="p-3 sm:p-4">
+          <Card className="border-red-200 dark:border-red-800">
+            <CardContent className="p-4">
               <div className="flex items-center gap-2 mb-2">
-                <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5 text-red-500 shrink-0" />
-                <span className="font-medium text-sm sm:text-base">紧急响应</span>
+                <AlertTriangle className="h-5 w-5 text-red-500" />
+                <span className="font-medium">紧急响应</span>
               </div>
-              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+              <p className="text-sm text-gray-600 dark:text-gray-400">
                 紧急情况快速响应，提供及时的处理建议
               </p>
             </CardContent>

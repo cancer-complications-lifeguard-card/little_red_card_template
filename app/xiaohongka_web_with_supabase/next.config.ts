@@ -7,8 +7,6 @@ const nextConfig: NextConfig = {
   },
   // 禁用 Next.js 热重载，由 nodemon 处理重编译
   reactStrictMode: false,
-  // 启用独立输出模式，适用于 Docker 部署
-  output: 'standalone',
   webpack: (config, { dev }) => {
     if (dev) {
       // 禁用 webpack 的热模块替换
@@ -18,6 +16,7 @@ const nextConfig: NextConfig = {
     }
     return config;
   },
+
 };
 
 export default nextConfig;
