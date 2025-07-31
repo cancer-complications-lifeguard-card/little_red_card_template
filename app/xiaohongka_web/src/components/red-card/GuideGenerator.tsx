@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -268,7 +268,11 @@ export default function GuideGenerator() {
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
           >
+<<<<<<< HEAD
             <div className="space-y-6">
+=======
+            <div className="space-y-4 sm:space-y-6">
+>>>>>>> 3964d0f683292efd7eb97d273227183e87b91055
               <h2 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-200">选择并发症类型</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 {complications.map((comp, index) => (
@@ -286,11 +290,19 @@ export default function GuideGenerator() {
                   >
                     <Card className="h-full">
                       <CardContent className="p-3 sm:p-4">
+<<<<<<< HEAD
                         <div className="flex items-start gap-3">
                           <Checkbox
                             checked={selectedComplications.includes(comp.id)}
                             onChange={() => {}}
                             className="mt-1"
+=======
+                        <div className="flex items-start gap-2 sm:gap-3">
+                          <Checkbox
+                            checked={selectedComplications.includes(comp.id)}
+                            onChange={() => {}}
+                            className="mt-0.5 shrink-0"
+>>>>>>> 3964d0f683292efd7eb97d273227183e87b91055
                           />
                           <div className="flex-1 min-w-0">
                             <h3 className="font-semibold text-gray-800 dark:text-gray-200 mb-1 text-sm sm:text-base">
@@ -319,7 +331,11 @@ export default function GuideGenerator() {
             className="space-y-4 sm:space-y-6"
           >
             <h2 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-200">填写个人医疗信息</h2>
+<<<<<<< HEAD
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+=======
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+>>>>>>> 3964d0f683292efd7eb97d273227183e87b91055
               <div className="space-y-2">
                 <Label htmlFor="name" className="flex items-center gap-2">
                   姓名 <span className="text-red-500">*</span>
@@ -908,17 +924,24 @@ export default function GuideGenerator() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6 max-w-full overflow-hidden">
       {/* Steps Progress */}
+<<<<<<< HEAD
       <div className="mb-6 sm:mb-8">
         {/* Icons row - always aligned */}
         <div className="flex justify-between items-center mb-3 sm:mb-4">
+=======
+      <div className="relative">
+        {/* Desktop Progress */}
+        <div className="hidden md:flex justify-between items-start mb-8 px-4">
+>>>>>>> 3964d0f683292efd7eb97d273227183e87b91055
           {steps.map((step, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, delay: index * 0.1 }}
+<<<<<<< HEAD
               className="flex flex-col items-center flex-1 px-1"
             >
               <motion.div
@@ -959,6 +982,99 @@ export default function GuideGenerator() {
               </span>
             </motion.div>
           ))}
+=======
+              className="flex flex-col items-center flex-1 relative min-w-0"
+            >
+              {/* Icon Container */}
+              <div className="relative z-10 mb-3">
+                <motion.div
+                  className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 ${
+                    currentStep >= index
+                      ? 'bg-red-500 text-white shadow-lg'
+                      : 'bg-gray-200 dark:bg-gray-700 text-gray-500'
+                  }`}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                >
+                  <step.icon 
+                    className="w-6 h-6 shrink-0" 
+                    style={{ 
+                      display: 'block',
+                      margin: 'auto'
+                    }}
+                  />
+                </motion.div>
+              </div>
+              
+              {/* Step Title */}
+              <span className={`text-sm font-medium text-center max-w-[120px] leading-relaxed ${
+                currentStep >= index
+                  ? 'text-red-600 dark:text-red-400'
+                  : 'text-gray-500 dark:text-gray-400'
+              }`}>
+                {step.title}
+              </span>
+              
+              {/* Connection Line */}
+              {index < steps.length - 1 && (
+                <div 
+                  className="absolute top-6 left-1/2 h-0.5 bg-gray-300 dark:bg-gray-600 -z-10"
+                  style={{
+                    width: 'calc(100% - 48px)',
+                    transform: 'translateX(24px)'
+                  }}
+                />
+              )}
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Mobile Progress */}
+        <div className="md:hidden mb-6">
+          <div className="flex items-center justify-between mb-4 px-2">
+            <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
+              步骤 {currentStep + 1} / {steps.length}
+            </span>
+            <div className="flex gap-1">
+              {steps.map((_, index) => (
+                <div
+                  key={index}
+                  className={`w-2 h-2 rounded-full transition-colors ${
+                    currentStep >= index ? 'bg-red-500' : 'bg-gray-300 dark:bg-gray-600'
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+          
+          {/* Current Step Display */}
+          <motion.div
+            key={currentStep}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg"
+          >
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${
+              'bg-red-500 text-white'
+            }`}>
+              {React.createElement(steps[currentStep].icon, { className: "w-5 h-5" })}
+            </div>
+            <div>
+              <div className="font-medium text-gray-900 dark:text-gray-100">
+                {steps[currentStep].title}
+              </div>
+              <div className="text-sm text-gray-500 dark:text-gray-400">
+                步骤 {currentStep + 1}
+              </div>
+            </div>
+          </motion.div>
+>>>>>>> 3964d0f683292efd7eb97d273227183e87b91055
         </div>
       </div>
 
@@ -980,9 +1096,13 @@ export default function GuideGenerator() {
           <motion.button
             onClick={prevStep}
             disabled={currentStep === 0}
+<<<<<<< HEAD
             className="flex items-center gap-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-lg w-full sm:w-auto order-2 sm:order-1 disabled:opacity-50 disabled:cursor-not-allowed"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
+=======
+            className="flex items-center gap-2 w-full sm:w-auto order-2 sm:order-1"
+>>>>>>> 3964d0f683292efd7eb97d273227183e87b91055
           >
             <ChevronLeft className="h-4 w-4" />
             上一步
@@ -990,9 +1110,13 @@ export default function GuideGenerator() {
           <motion.button
             onClick={nextStep}
             disabled={!canProceed()}
+<<<<<<< HEAD
             className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg w-full sm:w-auto order-1 sm:order-2 disabled:opacity-50 disabled:cursor-not-allowed"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
+=======
+            className="flex items-center gap-2 bg-red-500 hover:bg-red-600 w-full sm:w-auto order-1 sm:order-2"
+>>>>>>> 3964d0f683292efd7eb97d273227183e87b91055
           >
             {currentStep === 3 ? '填写完成，提交生成小红卡' : currentStep === 2 ? '下一步' : '下一步'}
             <ChevronRight className="h-4 w-4" />
