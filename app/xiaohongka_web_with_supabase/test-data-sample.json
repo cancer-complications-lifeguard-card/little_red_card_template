@@ -1,0 +1,60 @@
+{
+  "userSession": {
+    "isLoggedIn": true,
+    "username": "测试用户",
+    "apiKey": "test-api-key-12345",
+    "selectedModel": "complication-expert",
+    "selectedGLMModel": "glm-4.5-air"
+  },
+  "appData": {
+    "selectedComplications": [
+      "bleeding",
+      "obstruction",
+      "infection"
+    ],
+    "medicalInfo": {
+      "name": "张三",
+      "age": "45",
+      "bloodType": "A型",
+      "mainDiagnosis": "胰腺癌",
+      "surgeryHistory": "2023年胰腺部分切除术",
+      "allergies": "青霉素过敏",
+      "otherDiseases": "高血压",
+      "isOnAnticoagulation": true,
+      "medicationType": "华法林",
+      "lastTaken": "2024-01-15",
+      "stopReason": "术前准备"
+    },
+    "emergencyContacts": [
+      {
+        "name": "李四",
+        "phone": "13800138000",
+        "relationship": "配偶"
+      },
+      {
+        "name": "王五",
+        "phone": "13900139000",
+        "relationship": "子女"
+      }
+    ],
+    "hospitals": [
+      {
+        "name": "北京协和医院",
+        "emergency": "010-69156114",
+        "address": "北京市东城区帅府园1号",
+        "features": "综合三甲医院，消化内科实力强"
+      },
+      {
+        "name": "解放军总医院",
+        "emergency": "010-66887329",
+        "address": "北京市海淀区复兴路28号",
+        "features": "军队医院，急诊科24小时服务"
+      }
+    ]
+  },
+  "exportInfo": {
+    "exportDate": "2024-01-20T10:30:00.000Z",
+    "version": "1.0",
+    "app": "小红卡 - 并发症管理指引生成器"
+  }
+}
