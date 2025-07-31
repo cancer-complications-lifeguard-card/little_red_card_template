@@ -1,4 +1,5 @@
 # ---------- 构建阶段 ----------
+# 使用 Node.js 18 作为基础构建镜像
 FROM node:18 AS builder
 
 WORKDIR /app
@@ -38,5 +39,5 @@ COPY --from=builder /app/prisma ./prisma
 # 端口配置
 EXPOSE 3000
 
-# 启动你的自定义服务（用 tsx）
+# 启动服务
 CMD ["npx", "tsx", "server.ts"]
