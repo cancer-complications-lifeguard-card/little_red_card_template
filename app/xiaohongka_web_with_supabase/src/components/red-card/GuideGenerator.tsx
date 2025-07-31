@@ -135,6 +135,19 @@ export default function GuideGenerator() {
       setSymptomRecords(savedSymptomRecords);
     }
   }, []);
+
+  // 监听来自CardPreview的自定义事件
+  useEffect(() => {
+    const handleGoToStep = (event: CustomEvent) => {
+      setCurrentStep(event.detail);
+    };
+    
+    window.addEventListener('goToStep', handleGoToStep as EventListener);
+    
+    return () => {
+      window.removeEventListener('goToStep', handleGoToStep as EventListener);
+    };
+  }, []);
   
   // 保存数据到localStorage
   useEffect(() => {

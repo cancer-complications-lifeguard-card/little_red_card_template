@@ -1203,6 +1203,40 @@ export default function CardPreview({
 
   const emergencyGuidance = getEmergencyGuidance();
   const diagnosisGuidance = getDiagnosisGuidance();
+
+  // 如果没有选择任何并发症，显示提示信息
+  if (selectedComplications.length === 0) {
+    return (
+      <div className="space-y-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+          className="text-center py-12"
+        >
+          <div className="bg-yellow-50 dark:bg-yellow-950 border border-yellow-200 dark:border-yellow-800 rounded-lg p-8">
+            <AlertTriangle className="h-16 w-16 text-yellow-500 mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-yellow-800 dark:text-yellow-200 mb-2">
+              请先选择并发症类型
+            </h3>
+            <p className="text-yellow-600 dark:text-yellow-400 mb-6">
+              您需要返回第一步选择至少一种并发症类型，才能生成预览卡片。
+            </p>
+            <Button 
+              onClick={() => {
+                // 通知父组件返回第一步
+                const event = new CustomEvent('goToStep', { detail: 0 });
+                window.dispatchEvent(event);
+              }}
+              className="bg-yellow-500 hover:bg-yellow-600 text-white"
+            >
+              返回选择并发症
+            </Button>
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
   const dailyCareGuidance = getDailyCareGuidance();
   const supportServices = getSupportServices();
   const medicalTerminology = getMedicalTerminology();

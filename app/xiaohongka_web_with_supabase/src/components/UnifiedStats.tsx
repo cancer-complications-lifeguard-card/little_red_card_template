@@ -144,30 +144,6 @@ export default function UnifiedStats() {
   const stats = [
     {
       id: 1,
-      icon: TrendingUp,
-      value: visitData.totalCount.toLocaleString(),
-      label: "累计使用人次",
-      color: "red",
-      delay: 0.1
-    },
-    {
-      id: 2,
-      icon: Activity,
-      value: visitData.todayCount.toLocaleString(),
-      label: "今日访问量",
-      color: "blue",
-      delay: 0.2
-    },
-    {
-      id: 3,
-      icon: Heart,
-      value: visitData.servedPatients.toLocaleString(),
-      label: "服务患者数量",
-      color: "pink",
-      delay: 0.3
-    },
-    {
-      id: 4,
       icon: Calendar,
       value: new Date(visitData.date).toLocaleDateString('zh-CN', { 
         month: '2-digit', 
@@ -175,14 +151,38 @@ export default function UnifiedStats() {
       }),
       label: "统计日期",
       color: "green",
-      delay: 0.4
+      delay: 0.1
     },
     {
-      id: 5,
+      id: 2,
       icon: Wifi,
       value: onlineCount.toString(),
       label: "在线用户",
       color: "indigo",
+      delay: 0.2
+    },
+    {
+      id: 3,
+      icon: TrendingUp,
+      value: visitData.totalCount.toLocaleString(),
+      label: "累计使用人次",
+      color: "red",
+      delay: 0.3
+    },
+    {
+      id: 4,
+      icon: Activity,
+      value: visitData.todayCount.toLocaleString(),
+      label: "今日访问量",
+      color: "blue",
+      delay: 0.4
+    },
+    {
+      id: 5,
+      icon: Heart,
+      value: visitData.servedPatients.toLocaleString(),
+      label: "服务患者数量",
+      color: "pink",
       delay: 0.5
     }
   ];
