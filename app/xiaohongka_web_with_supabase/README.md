@@ -230,6 +230,37 @@ npm run build
 npm start
 ```
 
+### 使用Docker进行部署
+
+您需要安装 docker，然后在目录下创建 `docker-compose.yml` 文件：
+
+```bash
+nano docker-compose.yml
+```
+
+写入：
+
+```yml
+services:
+  web:
+    image: ghcr.io/cancer-complications-lifeguard-card/xiaohongka_web
+    container_name: xiaohongka_web
+    restart: unless-stopped
+    ports:
+      - "3011:3000"
+    environment:
+      - NEXT_PUBLIC_SUPABASE_URL=
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=
+```
+
+之后启动：
+
+```
+docker compose up -d
+```
+
+服务将启动于 3011 端口
+
 ## 📊 性能优化
 
 ### 前端优化
