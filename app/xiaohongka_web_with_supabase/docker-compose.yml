@@ -1,6 +1,6 @@
 services:
   web:
-    image: ghcr.io/cancer-complications-lifeguard-card/xiaohongka_web
+    image: crpi-gy45dxxqbfmdtsvs.cn-beijing.personal.cr.aliyuncs.com/liueic-github/xiaohongka_web:latest
     container_name: xiaohongka_web
     restart: unless-stopped
     ports:
