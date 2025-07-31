@@ -1,0 +1,86 @@
+[33m[nodemon] 3.1.10[39m
+[33m[nodemon] to restart at any time, enter `rs`[39m
+[33m[nodemon] watching path(s): server.ts src/**/*[39m
+[33m[nodemon] watching extensions: ts,tsx,js,jsx[39m
+[32m[nodemon] starting `npx tsx server.ts`[39m
+npm warn Unknown env config "home". This will stop working in the next major version of npm.
+npm warn Unknown user config "home". This will stop working in the next major version of npm.
+> Ready on http://0.0.0.0:3000
+> Socket.IO server running at ws://0.0.0.0:3000/api/socketio
+ ○ Compiling / ...
+ ⨯ ./src/components/red-card/GuideGenerator.tsx
+Error:   [31mx[0m Unexpected token `motion`. Expected jsx identifier
+     ,-[[36;1;4m/Users/liueic/Documents/实习/little_red_card_template/app/xiaohongka_web/src/components/red-card/GuideGenerator.tsx[0m:265:1]
+ [2m262[0m |     switch (currentStep) {
+ [2m263[0m |       case 0:
+ [2m264[0m |         return (
+ [2m265[0m |           <motion.div
+     : [35;1m           ^^^^^^[0m
+ [2m266[0m |             initial={{ opacity: 0, y: 20 }}
+ [2m267[0m |             animate={{ opacity: 1, y: 0 }}
+ [2m268[0m |             exit={{ opacity: 0, y: -20 }}
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/components/red-card/GuideGenerator.tsx
+./src/app/page.tsx
+ ⨯ ./src/components/red-card/GuideGenerator.tsx
+Error:   [31mx[0m Unexpected token `motion`. Expected jsx identifier
+     ,-[[36;1;4m/Users/liueic/Documents/实习/little_red_card_template/app/xiaohongka_web/src/components/red-card/GuideGenerator.tsx[0m:265:1]
+ [2m262[0m |     switch (currentStep) {
+ [2m263[0m |       case 0:
+ [2m264[0m |         return (
+ [2m265[0m |           <motion.div
+     : [35;1m           ^^^^^^[0m
+ [2m266[0m |             initial={{ opacity: 0, y: 20 }}
+ [2m267[0m |             animate={{ opacity: 1, y: 0 }}
+ [2m268[0m |             exit={{ opacity: 0, y: -20 }}
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/components/red-card/GuideGenerator.tsx
+./src/app/page.tsx
+ ⨯ ./src/components/red-card/GuideGenerator.tsx
+Error:   [31mx[0m Unexpected token `motion`. Expected jsx identifier
+     ,-[[36;1;4m/Users/liueic/Documents/实习/little_red_card_template/app/xiaohongka_web/src/components/red-card/GuideGenerator.tsx[0m:265:1]
+ [2m262[0m |     switch (currentStep) {
+ [2m263[0m |       case 0:
+ [2m264[0m |         return (
+ [2m265[0m |           <motion.div
+     : [35;1m           ^^^^^^[0m
+ [2m266[0m |             initial={{ opacity: 0, y: 20 }}
+ [2m267[0m |             animate={{ opacity: 1, y: 0 }}
+ [2m268[0m |             exit={{ opacity: 0, y: -20 }}
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/components/red-card/GuideGenerator.tsx
+./src/app/page.tsx
+ GET / 500 in 2533ms
+ ⚠ Cross origin request detected from 127.0.0.1 to /_next/* resource. In a future major version of Next.js, you will need to explicitly configure "allowedDevOrigins" in next.config to allow this.
+Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `npx tsx server.ts`[39m
+npm warn Unknown env config "home". This will stop working in the next major version of npm.
+npm warn Unknown user config "home". This will stop working in the next major version of npm.
+> Ready on http://0.0.0.0:3000
+> Socket.IO server running at ws://0.0.0.0:3000/api/socketio
+ ○ Compiling / ...
+ ✓ Compiled / in 2.1s (1787 modules)
+ GET / 200 in 2447ms
+ ⚠ Cross origin request detected from 127.0.0.1 to /_next/* resource. In a future major version of Next.js, you will need to explicitly configure "allowedDevOrigins" in next.config to allow this.
+Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 856ms (935 modules)
+ GET /favicon.ico 200 in 942ms
+ ✓ Compiled /_not-found in 342ms (1793 modules)
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 452ms
