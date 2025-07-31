@@ -1,8 +1,0 @@
-{
-  "/favicon.ico/route": "/favicon.ico",
-  "/api/ai/chat/route": "/api/ai/chat",
-  "/api/health/route": "/api/health",
-  "/api/counter/route": "/api/counter",
-  "/page": "/",
-  "/_not-found/page": "/_not-found"
-}
