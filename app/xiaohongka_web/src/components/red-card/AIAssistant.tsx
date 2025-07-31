@@ -362,7 +362,6 @@ export default function AIAssistant() {
       </AnimatePresence>
 
       {/* Header with Auth */}
-<<<<<<< HEAD
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 w-full sm:w-auto">
           <div className="flex items-center gap-2">
@@ -385,34 +384,6 @@ export default function AIAssistant() {
             </SelectContent>
           </Select>
           <Badge variant="outline" className="text-xs sm:text-sm text-blue-600 border-blue-200">
-=======
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="flex flex-col sm:flex-row sm:items-center gap-3 md:gap-4 min-w-0 flex-1">
-          <div className="flex items-center gap-2 shrink-0">
-            <Brain className="h-5 w-5 text-blue-500" />
-            <span className="font-medium text-sm md:text-base">AI模型：</span>
-          </div>
-          <div className="flex-1 min-w-0">
-            <Select value={selectedModel} onValueChange={setSelectedModel}>
-              <SelectTrigger className="w-full sm:w-auto sm:min-w-[200px] md:w-64 max-w-full">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="w-[280px] sm:w-auto">
-                {aiModels.map((model) => (
-                  <SelectItem key={model.id} value={model.id}>
-                    <div className="max-w-[240px] sm:max-w-none">
-                      <div className="font-medium truncate">{model.name}</div>
-                      <div className="text-sm text-gray-500 truncate sm:whitespace-normal">
-                        {model.description}
-                      </div>
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <Badge variant="outline" className="text-blue-600 border-blue-200 shrink-0 w-fit">
->>>>>>> 3964d0f683292efd7eb97d273227183e87b91055
             <Sparkles className="h-3 w-3 mr-1" />
             <span className="text-xs sm:text-sm">智能匹配</span>
           </Badge>
@@ -443,19 +414,11 @@ export default function AIAssistant() {
       )}
 
       {/* Chat Container */}
-<<<<<<< HEAD
       <Card className="flex flex-col h-[60vh] sm:h-[70vh] max-h-[600px] sm:max-h-[800px]">
         <CardHeader className="pb-2 sm:pb-3 flex-shrink-0">
           <CardTitle className="flex items-center gap-2">
             <MessageSquare className="h-4 w-4 sm:h-5 sm:w-5 text-blue-500" />
             <span className="text-base sm:text-lg">AI医疗对话</span>
-=======
-      <Card className="flex flex-col overflow-hidden" style={{ minHeight: '450px' }}>
-        <CardHeader className="pb-2 sm:pb-3 px-3 sm:px-6">
-          <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-            <MessageSquare className="h-4 w-4 sm:h-5 sm:w-5 text-blue-500" />
-            <span>AI医疗对话</span>
->>>>>>> 3964d0f683292efd7eb97d273227183e87b91055
             {userSession.isLoggedIn && (
               <Badge variant="secondary" className="text-xs">
                 已连接
@@ -466,11 +429,7 @@ export default function AIAssistant() {
         
         <CardContent className="flex-1 flex flex-col p-0 min-h-0">
           {/* Messages */}
-<<<<<<< HEAD
           <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 sm:space-y-4 min-h-0">
-=======
-          <div className="flex-1 overflow-y-auto p-2 sm:p-4 space-y-3 sm:space-y-4" style={{ maxHeight: '400px' }}>
->>>>>>> 3964d0f683292efd7eb97d273227183e87b91055
             <AnimatePresence>
               {messages.map((message) => (
                 <motion.div
@@ -506,17 +465,10 @@ export default function AIAssistant() {
                           : 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-bl-none'
                       }`}
                     >
-<<<<<<< HEAD
                       <div className="whitespace-pre-wrap text-xs sm:text-sm break-words overflow-hidden">
                         {message.displayContent}
                         {message.isTyping && (
                           <span className="text-gray-400 ml-1 text-xs">正在思考中，请稍等...</span>
-=======
-                      <div className="whitespace-pre-wrap text-xs sm:text-sm break-words overflow-wrap-anywhere">
-                        {message.displayContent}
-                        {message.isTyping && (
-                          <span className="text-gray-400 ml-1 text-xs sm:text-sm">正在思考中，请稍等...</span>
->>>>>>> 3964d0f683292efd7eb97d273227183e87b91055
                         )}
                       </div>
                     </div>
@@ -551,32 +503,17 @@ export default function AIAssistant() {
           </div>
 
           {/* Quick Questions */}
-<<<<<<< HEAD
           <div className="flex-shrink-0 p-3 sm:p-4 border-t border-gray-200 dark:border-gray-700">
             <div className="mb-2 sm:mb-3">
               <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-1 sm:mb-2">快速提问：</p>
               <div className="flex flex-wrap gap-1 sm:gap-2">
-=======
-          <div className="p-3 sm:p-4 border-t border-gray-200 dark:border-gray-700">
-            <div className="mb-3">
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">快速提问：</p>
-              <div className="flex flex-wrap gap-1.5 sm:gap-2">
->>>>>>> 3964d0f683292efd7eb97d273227183e87b91055
                 {quickQuestions.map((question, index) => (
                   <motion.button
                     key={index}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => handleQuickQuestion(question)}
-<<<<<<< HEAD
                     className="px-2 sm:px-3 py-1 text-xs bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors leading-relaxed"
-=======
-                    className="px-2.5 sm:px-3 py-1 text-xs bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors break-words hyphens-auto leading-relaxed max-w-full"
-                    style={{ 
-                      wordBreak: 'break-word',
-                      overflowWrap: 'break-word'
-                    }}
->>>>>>> 3964d0f683292efd7eb97d273227183e87b91055
                   >
                     {question}
                   </motion.button>
@@ -590,11 +527,7 @@ export default function AIAssistant() {
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
                 placeholder="请输入您的问题..."
-<<<<<<< HEAD
                 className="flex-1 resize-none text-sm"
-=======
-                className="flex-1 resize-none min-h-[60px] sm:min-h-[auto]"
->>>>>>> 3964d0f683292efd7eb97d273227183e87b91055
                 rows={2}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && !e.shiftKey) {
@@ -607,16 +540,9 @@ export default function AIAssistant() {
               <Button
                 onClick={handleSendMessage}
                 disabled={!inputMessage.trim() || isLoading || !userSession.isLoggedIn}
-<<<<<<< HEAD
                 className="self-end bg-blue-500 hover:bg-blue-600 px-3 sm:px-4"
               >
                 <Send className="h-3 w-3 sm:h-4 sm:w-4" />
-=======
-                className="self-end sm:self-end bg-blue-500 hover:bg-blue-600 w-full sm:w-auto mt-2 sm:mt-0"
-              >
-                <Send className="h-4 w-4 mr-2 sm:mr-0" />
-                <span className="sm:hidden">发送</span>
->>>>>>> 3964d0f683292efd7eb97d273227183e87b91055
               </Button>
             </div>
           </div>
