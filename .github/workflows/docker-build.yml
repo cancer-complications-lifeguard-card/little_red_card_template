@@ -13,7 +13,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Log in to GHCR with GITHUB_TOKEN
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
@@ -21,6 +21,8 @@ jobs:
       - name: Build Docker image
         run: |
           docker build \
+            --build-arg NEXT_PUBLIC_SUPABASE_URL="https://placeholder.supabase.co" \
+            --build-arg NEXT_PUBLIC_SUPABASE_ANON_KEY="placeholder-key" \
             -t ghcr.io/${{ github.repository_owner }}/xiaohongka_web:latest \
             -t ghcr.io/${{ github.repository_owner }}/xiaohongka_web:${{ github.sha }} \
             ./app/xiaohongka_web_with_supabase
