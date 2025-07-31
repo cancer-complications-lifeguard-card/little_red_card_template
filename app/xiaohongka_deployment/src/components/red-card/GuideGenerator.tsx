@@ -54,6 +54,20 @@ interface Hospital {
   features: string;
 }
 
+interface NursingService {
+  provider: string;
+  contact: string;
+  price: string;
+  features: string;
+}
+
+interface SymptomRecord {
+  date: string;
+  symptom: string;
+  severity: string;
+  description: string;
+}
+
 const complications = [
   { id: 'bleeding', name: '消化道出血', description: '呕血、黑便等症状的紧急处理' },
   { id: 'obstruction', name: '肠梗阻', description: '腹痛、呕吐、腹胀等症状的紧急处理' },
@@ -81,8 +95,12 @@ export default function GuideGenerator() {
   });
   const [emergencyContacts, setEmergencyContacts] = useState<EmergencyContact[]>([]);
   const [hospitals, setHospitals] = useState<Hospital[]>([]);
+  const [nursingServices, setNursingServices] = useState<NursingService[]>([]);
+  const [symptomRecords, setSymptomRecords] = useState<SymptomRecord[]>([]);
   const [newContact, setNewContact] = useState<EmergencyContact>({ name: '', phone: '', relationship: '' });
   const [newHospital, setNewHospital] = useState<Hospital>({ name: '', emergency: '', address: '', features: '' });
+  const [newNursingService, setNewNursingService] = useState<NursingService>({ provider: '', contact: '', price: '', features: '' });
+  const [newSymptomRecord, setNewSymptomRecord] = useState<SymptomRecord>({ date: '', symptom: '', severity: '', description: '' });
 
   // 从localStorage加载数据
   useEffect(() => {
@@ -90,6 +108,8 @@ export default function GuideGenerator() {
     const savedMedicalInfo = JSON.parse(localStorage.getItem('medicalInfo') || '{}');
     const savedContacts = JSON.parse(localStorage.getItem('emergencyContacts') || '[]');
     const savedHospitals = JSON.parse(localStorage.getItem('hospitals') || '[]');
+    const savedNursingServices = JSON.parse(localStorage.getItem('nursingServices') || '[]');
+    const savedSymptomRecords = JSON.parse(localStorage.getItem('symptomRecords') || '[]');
     
     if (savedComplications.length > 0) {
       setSelectedComplications(savedComplications);
@@ -105,6 +125,14 @@ export default function GuideGenerator() {
     
     if (savedHospitals.length > 0) {
       setHospitals(savedHospitals);
+    }
+    
+    if (savedNursingServices.length > 0) {
+      setNursingServices(savedNursingServices);
+    }
+    
+    if (savedSymptomRecords.length > 0) {
+      setSymptomRecords(savedSymptomRecords);
     }
   }, []);
   
@@ -124,6 +152,14 @@ export default function GuideGenerator() {
   useEffect(() => {
     localStorage.setItem('hospitals', JSON.stringify(hospitals));
   }, [hospitals]);
+  
+  useEffect(() => {
+    localStorage.setItem('nursingServices', JSON.stringify(nursingServices));
+  }, [nursingServices]);
+  
+  useEffect(() => {
+    localStorage.setItem('symptomRecords', JSON.stringify(symptomRecords));
+  }, [symptomRecords]);
 
   const handleComplicationChange = (id: string) => {
     if (selectedComplications.includes(id)) {
@@ -166,8 +202,34 @@ export default function GuideGenerator() {
     setHospitals(newHospitals);
   };
 
+  const handleAddNursingService = () => {
+    if (newNursingService.provider && newNursingService.contact && newNursingService.price) {
+      setNursingServices([...nursingServices, newNursingService]);
+      setNewNursingService({ provider: '', contact: '', price: '', features: '' });
+    }
+  };
+
+  const handleRemoveNursingService = (index: number) => {
+    const newNursingServices = [...nursingServices];
+    newNursingServices.splice(index, 1);
+    setNursingServices(newNursingServices);
+  };
+
+  const handleAddSymptomRecord = () => {
+    if (newSymptomRecord.date && newSymptomRecord.symptom && newSymptomRecord.severity) {
+      setSymptomRecords([...symptomRecords, newSymptomRecord]);
+      setNewSymptomRecord({ date: '', symptom: '', severity: '', description: '' });
+    }
+  };
+
+  const handleRemoveSymptomRecord = (index: number) => {
+    const newSymptomRecords = [...symptomRecords];
+    newSymptomRecords.splice(index, 1);
+    setSymptomRecords(newSymptomRecords);
+  };
+
   const nextStep = () => {
-    if (currentStep < 3) {
+    if (currentStep < 4) {
       setCurrentStep(currentStep + 1);
     }
   };
@@ -183,6 +245,7 @@ export default function GuideGenerator() {
       case 0: return selectedComplications.length > 0;
       case 1: return medicalInfo.name && medicalInfo.bloodType;
       case 2: return emergencyContacts.length > 0 || hospitals.length > 0;
+      case 3: return true; // 辅助信息步骤是可选的
       default: return true;
     }
   };
@@ -191,6 +254,7 @@ export default function GuideGenerator() {
     { title: '选择并发症类型', icon: Activity },
     { title: '填写个人医疗信息', icon: User },
     { title: '添加紧急联系人和医院信息', icon: Phone },
+    { title: '填写护理服务和症状记录', icon: Heart },
     { title: '预览和下载', icon: Download }
   ];
 
@@ -205,8 +269,8 @@ export default function GuideGenerator() {
             transition={{ duration: 0.3 }}
           >
             <div className="space-y-6">
-              <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200">选择并发症类型</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-200">选择并发症类型</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 {complications.map((comp, index) => (
                   <motion.div
                     key={comp.id}
@@ -221,17 +285,18 @@ export default function GuideGenerator() {
                     onClick={() => handleComplicationChange(comp.id)}
                   >
                     <Card className="h-full">
-                      <CardContent className="p-4">
+                      <CardContent className="p-3 sm:p-4">
                         <div className="flex items-start gap-3">
                           <Checkbox
                             checked={selectedComplications.includes(comp.id)}
                             onChange={() => {}}
+                            className="mt-1"
                           />
-                          <div className="flex-1">
-                            <h3 className="font-semibold text-gray-800 dark:text-gray-200 mb-1">
+                          <div className="flex-1 min-w-0">
+                            <h3 className="font-semibold text-gray-800 dark:text-gray-200 mb-1 text-sm sm:text-base">
                               {comp.name}
                             </h3>
-                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                            <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
                               {comp.description}
                             </p>
                           </div>
@@ -251,10 +316,10 @@ export default function GuideGenerator() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
-            className="space-y-6"
+            className="space-y-4 sm:space-y-6"
           >
-            <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200">填写个人医疗信息</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-200">填写个人医疗信息</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <div className="space-y-2">
                 <Label htmlFor="name" className="flex items-center gap-2">
                   姓名 <span className="text-red-500">*</span>
@@ -300,13 +365,14 @@ export default function GuideGenerator() {
                   placeholder="如：胰腺癌、胃癌等"
                 />
               </div>
-              <div className="md:col-span-2 space-y-2">
+              <div className="sm:col-span-2 space-y-2">
                 <Label htmlFor="surgeryHistory">手术史</Label>
                 <Textarea
                   id="surgeryHistory"
                   value={medicalInfo.surgeryHistory}
                   onChange={(e) => handleMedicalInfoChange('surgeryHistory', e.target.value)}
                   placeholder="请填写手术史"
+                  className="min-h-[80px] sm:min-h-[100px]"
                 />
               </div>
               <div className="space-y-2">
@@ -327,7 +393,7 @@ export default function GuideGenerator() {
                   placeholder="请填写其他疾病"
                 />
               </div>
-              <div className="md:col-span-2 space-y-2">
+              <div className="sm:col-span-2 space-y-2">
                 <Label className="flex items-center gap-2">
                   <AlertTriangle className="h-4 w-4 text-red-500" />
                   抗凝治疗信息
@@ -350,9 +416,9 @@ export default function GuideGenerator() {
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
                   exit={{ opacity: 0, height: 0 }}
-                  className="md:col-span-2 space-y-4 border-l-4 border-red-500 pl-4 bg-red-50 dark:bg-red-950 p-4 rounded"
+                  className="sm:col-span-2 space-y-3 sm:space-y-4 border-l-4 border-red-500 pl-3 sm:pl-4 bg-red-50 dark:bg-red-950 p-3 sm:p-4 rounded"
                 >
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="medicationType">抗凝药物种类</Label>
                       <Input
@@ -393,14 +459,14 @@ export default function GuideGenerator() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
-            className="space-y-6"
+            className="space-y-4 sm:space-y-6"
           >
-            <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200">添加紧急联系人和医院信息</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-200">添加紧急联系人和医院信息</h2>
             
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               <div className="flex items-center gap-2">
-                <AlertTriangle className="h-5 w-5 text-red-500" />
-                <h3 className="text-lg font-semibold">紧急联系人</h3>
+                <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5 text-red-500" />
+                <h3 className="text-base sm:text-lg font-semibold">紧急联系人</h3>
               </div>
               
               {emergencyContacts.map((contact, index) => (
@@ -412,7 +478,7 @@ export default function GuideGenerator() {
                   className="relative"
                 >
                   <Card className="border-red-200 dark:border-red-800">
-                    <CardContent className="p-4">
+                    <CardContent className="p-3 sm:p-4">
                       <div className="flex justify-between items-start">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2">
@@ -598,12 +664,241 @@ export default function GuideGenerator() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
+            className="space-y-4 sm:space-y-6"
+          >
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-200">填写护理服务和症状记录</h2>
+            
+            {/* Nursing Services Section */}
+            <div className="space-y-3 sm:space-y-4">
+              <div className="flex items-center gap-2">
+                <Heart className="h-4 w-4 sm:h-5 sm:w-5 text-red-500" />
+                <h3 className="text-base sm:text-lg font-semibold">护理服务</h3>
+              </div>
+              
+              {nursingServices.map((service, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  className="relative"
+                >
+                  <Card className="border-green-200 dark:border-green-800">
+                    <CardContent className="p-3 sm:p-4">
+                      <div className="flex justify-between items-start">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-2">
+                            <Heart className="h-4 w-4 text-green-500" />
+                            <span className="font-semibold">{service.provider}</span>
+                          </div>
+                          <div className="space-y-1 text-sm text-gray-600 dark:text-gray-400">
+                            <div className="flex items-center gap-2">
+                              <Phone className="h-4 w-4" />
+                              <span>{service.contact}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <MapPin className="h-4 w-4" />
+                              <span>{service.price}</span>
+                            </div>
+                            {service.features && (
+                              <p className="text-xs mt-1">{service.features}</p>
+                            )}
+                          </div>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleRemoveNursingService(index)}
+                          className="text-red-500 hover:text-red-700"
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+              
+              <Card className="border-dashed border-2 border-gray-300 dark:border-gray-600">
+                <CardContent className="p-4">
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="nursing-provider">服务机构</Label>
+                        <Input
+                          id="nursing-provider"
+                          value={newNursingService.provider}
+                          onChange={(e) => setNewNursingService({...newNursingService, provider: e.target.value})}
+                          placeholder="请填写护理服务机构名称"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="nursing-contact">联系方式</Label>
+                        <Input
+                          id="nursing-contact"
+                          value={newNursingService.contact}
+                          onChange={(e) => setNewNursingService({...newNursingService, contact: e.target.value})}
+                          placeholder="请填写联系电话"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="nursing-price">服务价格</Label>
+                        <Input
+                          id="nursing-price"
+                          value={newNursingService.price}
+                          onChange={(e) => setNewNursingService({...newNursingService, price: e.target.value})}
+                          placeholder="如：1对1护理 200元/天"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="nursing-features">服务特色（选填）</Label>
+                        <Input
+                          id="nursing-features"
+                          value={newNursingService.features}
+                          onChange={(e) => setNewNursingService({...newNursingService, features: e.target.value})}
+                          placeholder="请填写服务特色"
+                        />
+                      </div>
+                    </div>
+                    <Button
+                      onClick={handleAddNursingService}
+                      className="w-full"
+                      disabled={!newNursingService.provider || !newNursingService.contact || !newNursingService.price}
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      添加护理服务
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+            
+            {/* Symptom Records Section */}
+            <div className="space-y-3 sm:space-y-4">
+              <div className="flex items-center gap-2">
+                <Activity className="h-4 w-4 sm:h-5 sm:w-5 text-blue-500" />
+                <h3 className="text-base sm:text-lg font-semibold">症状记录</h3>
+              </div>
+              
+              {symptomRecords.map((record, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  className="relative"
+                >
+                  <Card className="border-blue-200 dark:border-blue-800">
+                    <CardContent className="p-3 sm:p-4">
+                      <div className="flex justify-between items-start">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-2">
+                            <Clock className="h-4 w-4 text-blue-500" />
+                            <span className="font-semibold">{record.date}</span>
+                            <Badge variant="outline">{record.severity}</Badge>
+                          </div>
+                          <div className="space-y-1 text-sm">
+                            <div>
+                              <span className="font-medium">症状：</span>
+                              <span className="text-gray-600 dark:text-gray-400">{record.symptom}</span>
+                            </div>
+                            {record.description && (
+                              <div>
+                                <span className="font-medium">描述：</span>
+                                <span className="text-gray-600 dark:text-gray-400">{record.description}</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleRemoveSymptomRecord(index)}
+                          className="text-red-500 hover:text-red-700"
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+              
+              <Card className="border-dashed border-2 border-gray-300 dark:border-gray-600">
+                <CardContent className="p-4">
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="symptom-date">日期</Label>
+                        <Input
+                          id="symptom-date"
+                          type="date"
+                          value={newSymptomRecord.date}
+                          onChange={(e) => setNewSymptomRecord({...newSymptomRecord, date: e.target.value})}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="symptom-severity">严重程度</Label>
+                        <Select value={newSymptomRecord.severity} onValueChange={(value) => setNewSymptomRecord({...newSymptomRecord, severity: value})}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="选择严重程度" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="轻度">轻度</SelectItem>
+                            <SelectItem value="中度">中度</SelectItem>
+                            <SelectItem value="重度">重度</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="symptom-name">症状名称</Label>
+                        <Input
+                          id="symptom-name"
+                          value={newSymptomRecord.symptom}
+                          onChange={(e) => setNewSymptomRecord({...newSymptomRecord, symptom: e.target.value})}
+                          placeholder="如：腹痛、腹胀、呕吐等"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="symptom-description">症状描述（选填）</Label>
+                        <Textarea
+                          id="symptom-description"
+                          value={newSymptomRecord.description}
+                          onChange={(e) => setNewSymptomRecord({...newSymptomRecord, description: e.target.value})}
+                          placeholder="详细描述症状情况"
+                          className="min-h-[60px]"
+                        />
+                      </div>
+                    </div>
+                    <Button
+                      onClick={handleAddSymptomRecord}
+                      className="w-full"
+                      disabled={!newSymptomRecord.date || !newSymptomRecord.symptom || !newSymptomRecord.severity}
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      添加症状记录
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </motion.div>
+        );
+      case 4:
+        return (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
           >
             <CardPreview 
               selectedComplications={selectedComplications}
               medicalInfo={medicalInfo}
               emergencyContacts={emergencyContacts}
               hospitals={hospitals}
+              nursingServices={nursingServices}
+              symptomRecords={symptomRecords}
             />
           </motion.div>
         );
@@ -615,72 +910,93 @@ export default function GuideGenerator() {
   return (
     <div className="space-y-6">
       {/* Steps Progress */}
-      <div className="flex justify-between items-center mb-8">
-        {steps.map((step, index) => (
-          <motion.div
-            key={index}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: index * 0.1 }}
-            className="flex flex-col items-center flex-1 relative"
-          >
+      <div className="mb-6 sm:mb-8">
+        {/* Icons row - always aligned */}
+        <div className="flex justify-between items-center mb-3 sm:mb-4">
+          {steps.map((step, index) => (
             <motion.div
-              className={`w-12 h-12 rounded-full flex items-center justify-center mb-2 transition-all duration-300 ${
-                currentStep >= index
-                  ? 'bg-red-500 text-white'
-                  : 'bg-gray-200 dark:bg-gray-700 text-gray-500'
-              }`}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: index * 0.1 }}
+              className="flex flex-col items-center flex-1 px-1"
             >
-              <step.icon className="h-6 w-6" />
+              <motion.div
+                className={`w-8 h-8 sm:w-12 sm:h-12 rounded-full flex items-center justify-center transition-all duration-300 flex-shrink-0 cursor-pointer ${
+                  currentStep >= index
+                    ? 'bg-red-500 text-white'
+                    : 'bg-gray-200 dark:bg-gray-700 text-gray-500'
+                }`}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={() => setCurrentStep(index)}
+              >
+                <step.icon className="h-4 w-4 sm:h-6 sm:w-6 flex-shrink-0" />
+              </motion.div>
             </motion.div>
-            <span className={`text-sm font-medium text-center ${
-              currentStep >= index
-                ? 'text-red-600 dark:text-red-400'
-                : 'text-gray-500 dark:text-gray-400'
-            }`}>
-              {step.title}
-            </span>
-            {index < steps.length - 1 && (
-              <div className="absolute top-6 left-1/2 w-full h-0.5 bg-gray-300 dark:bg-gray-600 -z-10" />
-            )}
-          </motion.div>
-        ))}
+          ))}
+        </div>
+        
+        {/* Text row - independent alignment */}
+        <div className="flex justify-between items-start mt-1 sm:mt-2">
+          {steps.map((step, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: index * 0.1 }}
+              className="flex-1 px-2 text-center"
+            >
+              <span 
+                className={`text-xs sm:text-sm font-medium leading-tight break-words inline-block max-w-full px-1 cursor-pointer transition-colors duration-200 ${
+                  currentStep >= index
+                    ? 'text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300'
+                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                }`}
+                onClick={() => setCurrentStep(index)}
+              >
+                {step.title}
+              </span>
+            </motion.div>
+          ))}
+        </div>
       </div>
 
       {/* Step Content */}
-      <div className="min-h-[400px]">
+      <div className="min-h-[350px] sm:min-h-[400px]">
         <AnimatePresence mode="wait">
           {renderStep()}
         </AnimatePresence>
       </div>
 
       {/* Navigation */}
-      {currentStep < 3 && (
+      {currentStep < 4 && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
-          className="flex justify-between items-center pt-6 border-t border-gray-200 dark:border-gray-700"
+          className="flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-0 pt-4 sm:pt-6 border-t border-gray-200 dark:border-gray-700"
         >
-          <Button
-            variant="outline"
+          <motion.button
             onClick={prevStep}
             disabled={currentStep === 0}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-lg w-full sm:w-auto order-2 sm:order-1 disabled:opacity-50 disabled:cursor-not-allowed"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
             <ChevronLeft className="h-4 w-4" />
             上一步
-          </Button>
-          <Button
+          </motion.button>
+          <motion.button
             onClick={nextStep}
             disabled={!canProceed()}
-            className="flex items-center gap-2 bg-red-500 hover:bg-red-600"
+            className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg w-full sm:w-auto order-1 sm:order-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
-            {currentStep === 2 ? '生成指引卡片' : '下一步'}
+            {currentStep === 3 ? '填写完成，提交生成小红卡' : currentStep === 2 ? '下一步' : '下一步'}
             <ChevronRight className="h-4 w-4" />
-          </Button>
+          </motion.button>
         </motion.div>
       )}
     </div>

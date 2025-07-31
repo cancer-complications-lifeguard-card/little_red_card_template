@@ -21,7 +21,11 @@ import {
   AlertCircle,
   CheckCircle,
   Eye,
-  EyeOff
+  EyeOff,
+  Download,
+  Upload,
+  FileDown,
+  FileUp
 } from "lucide-react";
 
 export interface UserSession {
@@ -205,6 +209,8 @@ export default function AuthManager({ onAuthChange, currentSession }: AuthManage
   const [isEditingPrompt, setIsEditingPrompt] = useState(false);
   const [testStatus, setTestStatus] = useState<'idle' | 'testing' | 'success' | 'error'>('idle');
   const [testMessage, setTestMessage] = useState('');
+  const [exportStatus, setExportStatus] = useState<'idle' | 'exporting' | 'success' | 'error'>('idle');
+  const [importStatus, setImportStatus] = useState<'idle' | 'importing' | 'success' | 'error'>('idle');
 
   useEffect(() => {
     setUsername(currentSession.username || '');
@@ -263,6 +269,123 @@ export default function AuthManager({ onAuthChange, currentSession }: AuthManage
     }
   };
 
+  // 导出所有数据
+  const exportAllData = () => {
+    setExportStatus('exporting');
+    
+    try {
+      // 收集所有数据
+      const allData = {
+        userSession: {
+          isLoggedIn: !!username && !!apiKey,
+          username,
+          apiKey,
+          selectedModel,
+          selectedGLMModel
+        },
+        appData: {
+          selectedComplications: JSON.parse(localStorage.getItem('selectedComplications') || '[]'),
+          medicalInfo: JSON.parse(localStorage.getItem('medicalInfo') || '{}'),
+          emergencyContacts: JSON.parse(localStorage.getItem('emergencyContacts') || '[]'),
+          hospitals: JSON.parse(localStorage.getItem('hospitals') || '[]')
+        },
+        exportInfo: {
+          exportDate: new Date().toISOString(),
+          version: '1.0',
+          app: '小红卡 - 并发症管理指引生成器'
+        }
+      };
+
+      // 创建下载
+      const dataStr = JSON.stringify(allData, null, 2);
+      const dataBlob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(dataBlob);
+      
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `xiaohongka-data-${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      setExportStatus('success');
+      setTimeout(() => setExportStatus('idle'), 3000);
+    } catch (error) {
+      setExportStatus('error');
+      setTimeout(() => setExportStatus('idle'), 3000);
+    }
+  };
+
+  // 导入数据
+  const importData = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setImportStatus('importing');
+    
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const data = JSON.parse(e.target?.result as string);
+        
+        // 验证数据格式
+        if (!data.userSession || !data.appData) {
+          throw new Error('无效的数据格式');
+        }
+
+        // 导入用户会话数据
+        const { userSession, appData } = data;
+        setUsername(userSession.username || '');
+        setApiKey(userSession.apiKey || '');
+        setSelectedModel(userSession.selectedModel || 'complication-expert');
+        setSelectedGLMModel(userSession.selectedGLMModel || 'glm-4.5');
+
+        // 保存用户会话
+        const session: UserSession = {
+          isLoggedIn: !!userSession.username && !!userSession.apiKey,
+          username: userSession.username || '',
+          apiKey: userSession.apiKey || '',
+          selectedModel: userSession.selectedModel || 'complication-expert',
+          selectedGLMModel: userSession.selectedGLMModel || 'glm-4.5'
+        };
+        
+        localStorage.setItem('userSession', JSON.stringify(session));
+        onAuthChange(session);
+
+        // 导入应用数据
+        if (appData.selectedComplications) {
+          localStorage.setItem('selectedComplications', JSON.stringify(appData.selectedComplications));
+        }
+        if (appData.medicalInfo) {
+          localStorage.setItem('medicalInfo', JSON.stringify(appData.medicalInfo));
+        }
+        if (appData.emergencyContacts) {
+          localStorage.setItem('emergencyContacts', JSON.stringify(appData.emergencyContacts));
+        }
+        if (appData.hospitals) {
+          localStorage.setItem('hospitals', JSON.stringify(appData.hospitals));
+        }
+
+        setImportStatus('success');
+        setTimeout(() => setImportStatus('idle'), 3000);
+        
+        // 刷新页面以应用新数据
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+        
+      } catch (error) {
+        setImportStatus('error');
+        setTimeout(() => setImportStatus('idle'), 3000);
+      }
+    };
+    
+    reader.readAsText(file);
+    // 重置文件输入
+    event.target.value = '';
+  };
+
   const selectedModelData = aiModels.find(model => model.id === selectedModel);
 
   return (
@@ -283,24 +406,24 @@ export default function AuthManager({ onAuthChange, currentSession }: AuthManage
         </Button>
       </DialogTrigger>
       
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-[95vw] sm:max-w-2xl max-h-[90vh] overflow-y-auto p-4 sm:p-6">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Shield className="h-5 w-5" />
+          <DialogTitle className="flex items-center gap-2 text-base sm:text-lg">
+            <Shield className="h-4 w-4 sm:h-5 sm:w-5" />
             AI助手设置
           </DialogTitle>
         </DialogHeader>
         
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {/* User Authentication */}
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <User className="h-5 w-5" />
+            <CardHeader className="pb-3 sm:pb-6">
+              <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                <User className="h-4 w-4 sm:h-5 sm:w-5" />
                 用户信息
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-3 sm:space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="username">用户名</Label>
                 <Input
@@ -326,13 +449,13 @@ export default function AuthManager({ onAuthChange, currentSession }: AuthManage
 
           {/* API Configuration */}
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Key className="h-5 w-5" />
+            <CardHeader className="pb-3 sm:pb-6">
+              <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                <Key className="h-4 w-4 sm:h-5 sm:w-5" />
                 API配置
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-3 sm:space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="apiKey">API密钥</Label>
                 <div className="flex gap-2">
@@ -354,7 +477,7 @@ export default function AuthManager({ onAuthChange, currentSession }: AuthManage
                 </div>
               </div>
               
-              <div className="flex gap-2">
+              <div className="flex flex-col sm:flex-row gap-2">
                 <Button
                   onClick={testApiConnection}
                   disabled={!apiKey || testStatus === 'testing'}
@@ -368,7 +491,7 @@ export default function AuthManager({ onAuthChange, currentSession }: AuthManage
                   disabled={!username || !apiKey}
                   className="flex items-center gap-2"
                 >
-                  <Save className="h-4 w-4" />
+                  <Save className="h-3 w-3 sm:h-4 sm:w-4" />
                   保存
                 </Button>
               </div>
@@ -379,10 +502,10 @@ export default function AuthManager({ onAuthChange, currentSession }: AuthManage
                   testStatus === 'error' ? 'bg-red-50 text-red-700' :
                   'bg-blue-50 text-blue-700'
                 }`}>
-                  {testStatus === 'success' && <CheckCircle className="h-4 w-4" />}
-                  {testStatus === 'error' && <AlertCircle className="h-4 w-4" />}
-                  {testStatus === 'testing' && <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />}
-                  <span className="text-sm">{testMessage}</span>
+                  {testStatus === 'success' && <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4" />}
+                  {testStatus === 'error' && <AlertCircle className="h-3 w-3 sm:h-4 sm:w-4" />}
+                  {testStatus === 'testing' && <div className="w-3 h-3 sm:w-4 sm:h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />}
+                  <span className="text-xs sm:text-sm">{testMessage}</span>
                 </div>
               )}
             </CardContent>
@@ -390,13 +513,13 @@ export default function AuthManager({ onAuthChange, currentSession }: AuthManage
 
           {/* Model Selection */}
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Bot className="h-5 w-5" />
+            <CardHeader className="pb-3 sm:pb-6">
+              <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                <Bot className="h-4 w-4 sm:h-5 sm:w-5" />
                 AI模型选择
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-3 sm:space-y-4">
               <div className="space-y-2">
                 <Label>选择AI模型</Label>
                 <Select value={selectedModel} onValueChange={setSelectedModel}>
@@ -472,6 +595,98 @@ export default function AuthManager({ onAuthChange, currentSession }: AuthManage
                   </div>
                 </div>
               )}
+            </CardContent>
+          </Card>
+
+          {/* Data Management */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <FileDown className="h-5 w-5" />
+                数据管理
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-3">
+                <div className="space-y-2">
+                  <Label className="text-sm">数据备份与恢复</Label>
+                  <p className="text-xs text-gray-500">
+                    导出所有设置和医疗信息，或从备份文件恢复数据
+                  </p>
+                </div>
+                
+                <div className="flex gap-2">
+                  <Button
+                    onClick={exportAllData}
+                    disabled={exportStatus === 'exporting'}
+                    variant="outline"
+                    className="flex items-center gap-2 flex-1"
+                  >
+                    {exportStatus === 'exporting' ? (
+                      <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <Download className="h-4 w-4" />
+                    )}
+                    {exportStatus === 'exporting' ? '导出中...' : '导出数据'}
+                  </Button>
+                  
+                  <div className="flex-1 relative">
+                    <input
+                      type="file"
+                      accept=".json"
+                      onChange={importData}
+                      disabled={importStatus === 'importing'}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
+                    />
+                    <Button
+                      disabled={importStatus === 'importing'}
+                      variant="outline"
+                      className="w-full flex items-center gap-2"
+                    >
+                      {importStatus === 'importing' ? (
+                        <div className="w-4 h-4 border-2 border-green-500 border-t-transparent rounded-full animate-spin" />
+                      ) : (
+                        <Upload className="h-4 w-4" />
+                      )}
+                      {importStatus === 'importing' ? '导入中...' : '导入数据'}
+                    </Button>
+                  </div>
+                </div>
+                
+                {(exportStatus === 'success' || importStatus === 'success') && (
+                  <div className="flex items-center gap-2 p-3 rounded-lg bg-green-50 text-green-700">
+                    <CheckCircle className="h-4 w-4" />
+                    <span className="text-sm">
+                      {exportStatus === 'success' ? '数据导出成功！' : '数据导入成功！页面即将刷新...'}
+                    </span>
+                  </div>
+                )}
+                
+                {(exportStatus === 'error' || importStatus === 'error') && (
+                  <div className="flex items-center gap-2 p-3 rounded-lg bg-red-50 text-red-700">
+                    <AlertCircle className="h-4 w-4" />
+                    <span className="text-sm">
+                      {exportStatus === 'error' ? '数据导出失败，请重试' : '数据导入失败，请检查文件格式'}
+                    </span>
+                  </div>
+                )}
+                
+                <div className="p-3 bg-blue-50 dark:bg-blue-950 rounded-lg">
+                  <h4 className="text-sm font-medium text-blue-800 dark:text-blue-200 mb-2">
+                    数据包含内容：
+                  </h4>
+                  <ul className="text-xs text-blue-700 dark:text-blue-300 space-y-1">
+                    <li>• 用户设置（API密钥、模型选择等）</li>
+                    <li>• 个人医疗信息</li>
+                    <li>• 紧急联系人信息</li>
+                    <li>• 医院信息</li>
+                    <li>• 并发症类型选择</li>
+                  </ul>
+                  <p className="text-xs text-blue-600 dark:text-blue-400 mt-2">
+                    💡 建议：定期备份数据以防意外丢失
+                  </p>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </div>

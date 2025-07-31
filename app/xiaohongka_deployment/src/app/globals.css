@@ -120,3 +120,123 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* 移动端优化样式 */
+@layer utilities {
+  /* 移动端特定的触摸优化 */
+  .touch-manipulation {
+    touch-action: manipulation;
+  }
+  
+  /* 移动端更好的滚动体验 */
+  .smooth-scroll {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+  
+  /* 移动端防止文本被选中 */
+  .select-none-mobile {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  
+  /* 移动端更好的按钮点击区域 */
+  .mobile-button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* 移动端更好的表单元素 */
+  .mobile-input {
+    font-size: 16px; /* 防止iOS缩放 */
+  }
+  
+  /* 移动端优化的卡片阴影 */
+  .mobile-card-shadow {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* 移动端更好的间距 */
+  .mobile-spacing {
+    padding: 1rem;
+  }
+  
+  /* 移动端优化的文字截断 */
+  .mobile-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  /* 移动端更好的flex布局 */
+  .mobile-flex {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+}
+
+/* 移动端特定的媒体查询 */
+@media (max-width: 640px) {
+  /* 移动端更小的字体 */
+  .mobile-text-sm {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+  }
+  
+  /* 移动端更紧凑的布局 */
+  .mobile-compact {
+    padding: 0.75rem;
+    gap: 0.5rem;
+  }
+  
+  /* 移动端全宽按钮 */
+  .mobile-full-width {
+    width: 100%;
+  }
+  
+  /* 移动端隐藏不重要的元素 */
+  .mobile-hide {
+    display: none;
+  }
+  
+  /* 移动端优化的模态框 */
+  .mobile-modal {
+    width: 95vw;
+    max-width: 95vw;
+    margin: 1rem;
+  }
+  
+  /* 移动端更好的触摸目标 */
+  .mobile-touch-target {
+    min-height: 48px;
+    min-width: 48px;
+    padding: 12px;
+  }
+}
+
+/* 平板设备优化 */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .tablet-compact {
+    padding: 1rem;
+    gap: 1rem;
+  }
+}
+
+/* 高分辨率设备优化 */
+@media (min-width: 1025px) {
+  .desktop-spacious {
+    padding: 1.5rem;
+    gap: 1.5rem;
+  }
+}
+
+/* 横屏模式优化 */
+@media (orientation: landscape) and (max-height: 600px) {
+  .landscape-compact {
+    padding: 0.5rem;
+    gap: 0.5rem;
+  }
+}
